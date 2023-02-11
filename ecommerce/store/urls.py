@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import (
-    HomepageView,
+# from .views import (
+    # HomepageView,
 #     SearchView,
 #     ProductView,
 #     CertainProductsView,
 #     ProductsView,
 #     NewslettersView,
-)
+# )
 app_name = 'store'
 
 urlpatterns = [
