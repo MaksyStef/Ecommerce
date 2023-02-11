@@ -1,0 +1,51 @@
+{% extends "store/base.html" %}
+{% load static sass_tags %}
+{% block title %}{{product.title|title}}{% endblock title %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% sass_src 'store/styles/product.scss' %}">
+{% endblock extra_head %}
+{% block body %}
+    <div class="wrapper column">
+        {% include "store/header.html" %}
+        <main class="content column">
+            <header class="subheader column">
+                <div class="hierarchy-links row">
+                    <a href="{% url 'store:homepage' %}">Homepage</a>
+                    <a href="{{product.subcat.get_absolute_url}}">{{product.subcat.title|title}}</a>
+                    <a class="current" href="{{product.get_absolute_url}}">{{product.title|title}}</a>
+                </div>
+            </header>
+            <div class="content-container column">
+                <div class="product">
+                    <div class="product__generic row">
+                        <div class="product__image">
+                            <img src="{% if product.image %}{% static product.image.url %}{% endif %}" alt="Product Image">
+                        </div>
+                        <div class="product__options column">
+                            <div class="column column_1">
+                                <div class="row_1 row">
+                                    <h1>{{product.title|title}}</h1>
+                                    <div class="stars"></div>
+                                    <div class="actions">
+                                        <button class="pushable favourite-btn"></button>
+                                        <button class="compare-btn pushable"></button>
+                                    </div>
+                                </div>
+                                <div class="row_2 row">Available</div>
+                            </div>
+                            <div class="column column_2">
+                                <div class="article">{{product.article}}</div>
+                                <div class="manufacturer">{{product.manufacturer}}</div>
+                                <div class="series">{{product.series}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product__description column">
+
+                    </div>
+                </div>
+            </div>
+        </main>
+        {% include "store/footer.html" %}
+    </div>
+{% endblock body %}

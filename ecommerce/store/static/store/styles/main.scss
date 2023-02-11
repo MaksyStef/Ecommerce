@@ -1,0 +1,65 @@
+// ================= Define vars =================
+// General font size
+$font-size: 18;
+$main-color: #141414;
+
+// Width of window
+$maxWidth: 1920;
+$maxWidthContainer: 1760;
+
+// ================= Import fonts =================
+// Montserrat family
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat/Montserrat-Medium.ttf") format("truetype");
+    font-weight: 500;
+}
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat/Montserrat-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Montserrat";
+    src: url("../fonts/Montserrat/Montserrat-Bold.ttf") format("truetype");
+    font-weight: 700;
+}
+
+// ================= Import styles =================
+@import "null.css", "multipurpose.scss", "header.scss", "footer.scss";
+
+// ================= Styles =================
+:root {
+    --main-color: #fff;
+    --secondary-color: #141414;
+    --orange-color: #e8aa31;
+}
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: "Montserrat";
+    font-weight: 600;
+}
+.wrapper {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.2s;
+    // transition-delay: 0.2s;
+    overflow-x: hidden;
+}
+.load {
+    transition: opacity 0.2s, hidden 0s;
+    transition-delay: 0s, 0.2s;
+}
+.content {
+    width: 100%;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,99 @@
+{% load static %}
+<header class="page-header column">
+    <section class="page-header__floor_black page-header__floor row">
+        <nav class="page-header__navigation row">
+            <a href="#" class="link">
+                <h1>About us</h1>
+            </a>
+            <a href="#" class="link">
+                <h1>Payment and delivery</h1>
+            </a>
+            <a href="#" class="link">
+                <h1>News board</h1>
+            </a>
+            <a href="#" class="link">
+                <h1>Contacts</h1>
+            </a>
+            <a href="{% url 'store:products' %}" class="link link_products">
+                <h1>Products</h1>
+            </a>
+        </nav>
+        <div class="page-header__personal-profile row">
+            <a href="{% url 'accounts:settings' %}" class="pushable row">
+                <img src="{% static 'store/images/icons/user-icon.svg' %}" alt="profile account" class="profile-icon profile-icon_white">
+                <h1>Personal account</h1>
+            </a>
+        </div>
+    </section>
+    <section class="page-header__floor_white page-header__white page-header__floor row">
+        <div class="page-header__white-left row">
+            <div class="page-header__logo">
+                <a href="/">
+                    <img src="{% static 'store/images/logo.svg' %}" alt="ZLATMAX logo">
+                </a>
+            </div>
+            <label class="page-header__product-search-container row" for="search-products">
+                <img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="product search icon">
+                <input 
+                    type="text" id="search-products" 
+                    class="product-search page-header__product-search" 
+                    placeholder="Search for product"
+                    list="product-search-suggestions"
+                />
+                <datalist id="product-search-suggestions">
+                    <option value="hey" for="search-products">hey</option>
+                </datalist>
+            </label>
+        </div>
+        <div class="page-header__white-right row">
+            <ul class="page-header__actions row">
+                <li class="page-header__action_location page-header__action row">
+
+                    <a target="_blank" href="https://goo.gl/maps/XaNopbtwZVugYkv99"><img class="location" src="{% static 'store/images/icons/location-icon.svg' %}" alt="location icon"></a>
+                    <h1 class="city"><a target="_blank" href="https://goo.gl/maps/XaNopbtwZVugYkv99">Berlin</a></h1>
+                </li>
+                <li class="page-header__action_phone page-header__action column">
+                    <p class="number">+49 152 901820</p>
+                    <p class="order-it"><a href="tel:+49152901820">Order by call</a></p>
+                </li>
+                <li class="page-header__action_buttons page-header__action row">
+                    <button class="pushable favourite-btn"></button>
+                    <button class="pushable cart-btn" purchase-count="0"></button>
+                    <div class="column">
+                        <p class="summary"><span id="purchase-summary">8</span>$</p>
+                        <a href="#" class="commiting">Commit purchase</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="page-header__floor_cats page-header__floor_black page-header__floor row">
+        <ul class="page-header__supercategories row">
+            {% for supercat in supercategories %}
+            <li class="page-header__supercategory">
+                <details class="page-header__supercategory-details">
+                    <summary class="link">
+                        <h1>{{supercat.title}} <a href="{{supercat.get_absolute_url}}" class="none"><img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="look for"></a></h1>
+                    </summary>
+                    <ul class="page-header__categories row">
+                        {% for cat in supercat.get_cats %}
+                        <li class="page-header__category column">
+                            <h2 class="page-header__category-title"><a class="link" href="{{cat.get_absolute_url}}">{{cat.title}}</a></h2>
+                            <hr class="page-header__category-line">
+                            <ul class="page-header__subcategories column">
+                            {% for subcat in cat.get_subcats %}
+                                <li class="page-header__subcategory">
+                                    <h3><a class="link" href="{{subcat.get_absolute_url}}">{{subcat.title}}</a></h3>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                            <hr class="page-header__category-line">
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+</header>

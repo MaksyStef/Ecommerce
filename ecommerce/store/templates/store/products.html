@@ -1,0 +1,268 @@
+{% extends "store/base.html" %}
+{% load static sass_tags %}
+{% load products_tags store_pagination %}
+{% block title %}{% if prods_cat %}{{prods_cat.title|title}}{% else %}Products{% endif %}{% endblock title %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% sass_src 'store/styles/products.scss' %}">
+{% endblock extra_head %}
+{% block body %}
+    <!-- Wrapper content -->
+    <div class="wrapper column">
+        {% include "store/header.html" %}
+        <main class="content">
+            <header class="subheader column">
+                <div class="row">
+                    <h1 class="filter-cat-title">{{prods_cat.title|title}}</h1>
+                </div>
+                <div class="row">
+                    <div class="hierarchy-links row">
+                        <a href="{% url 'store:homepage' %}">Homepage</a>
+                        {% if prods_cat.cat %}
+                        <a href="{{prods_cat.cat.supercat.get_absolute_url}}">{{prods_cat.cat.supercat.title|title}}</a>
+                        <a href="{{prods_cat.cat.get_absolute_url}}">{{prods_cat.cat.title|title}}</a>
+                        <a class="current" href="{{prods_cat.get_absolute_url}}">{{prods_cat.title|title}}</a>
+                        {% elif prods_cat.supercat %}
+                        <a href="{{prods_cat.supercat.get_absolute_url}}">{{prods_cat.supercat.title|title}}</a>
+                        <a class="current" href="{{prods_cat.get_absolute_url}}">{{prods_cat.title|title}}</a>
+                        {% elif prods_cat %}
+                        <a class="current" href="{{prods_cat.get_absolute_url}}">{{prods_cat.title|title}}</a>
+                        {% else %}
+                        <a class="current" href="{% url 'store:products' %}">All products</a>
+                        {% endif %}
+                    </div>
+                    <div class="ordering">
+                        
+                    </div>
+                </div>
+            </header>
+            <div class="content-container row">
+                <aside class="filters column">
+                    <h1 class="filters-header row">Products filter</h1>
+                    <details class="filter_price filter_range-filter filter" open>
+                        <summary>Price</summary>
+                        <ul class="filter-list">
+                            <li class="filter-item">
+                                <div class="number-input">
+                                    <div class="field">
+                                        <input type="number" class="input-min" value="{{min_price}}" min="{{min_price}}" max="{{max_price}}">
+                                    </div>
+                                    <div class="field">
+                                        <input type="number" class="input-max" value="{{max_price}}" min="{{min_price}}" max="{{max_price}}">
+                                    </div>
+                                </div>
+                                <div class="slider">
+                                    <div class="progress"></div>
+                                </div>
+                                <div class="range-input">
+                                    <input type="range" class="range-min" min="{{min_price}}" max="{{max_price}}" value="{{min_price}}" step="1">
+                                    <input type="range" class="range-max" min="{{min_price}}" max="{{max_price}}" value="{{max_price}}" step="1">
+                                </div>
+                            </li>
+                        </ul>
+                    </details>
+                    {% for cat in filter_cats %}
+                        <details class="filter_checkbox filter">
+                            <summary>{{cat.title}}</summary>
+                            <ul class="filter-list">
+                                {% for subcat in cat.get_subcats %}
+                                <li class="filter-item">
+                                    <label class="checkbox row">
+                                        <input type="checkbox">
+                                        <p class="title">{{subcat.title}}</p>
+                                        <p class="count">({{subcat.get_products.count}})</p]>
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    {% endfor %}
+                    <details class="filter_range-filter filter">
+                        <summary>Overall length</summary>
+                        <ul class="filter-list">
+                            <li class="filter-item">
+                                <div class="number-input">
+                                    <div class="field">
+                                        <input type="number" class="input-min" value="0">
+                                    </div>
+                                    <div class="field">
+                                        <input type="number" class="input-max" value="100">
+                                    </div>
+                                </div>
+                                <div class="slider">
+                                    <div class="progress"></div>
+                                </div>
+                                <div class="range-input">
+                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
+                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                </div>
+                            </li>
+                        </ul>
+                    </details>
+                    <details class="filter_range-filter filter">
+                        <summary>Edge length</summary>
+                        <ul class="filter-list">
+                            <li class="filter-item">
+                                <div class="number-input">
+                                    <div class="field">
+                                        <input type="number" class="input-min" value="0">
+                                    </div>
+                                    <div class="field">
+                                        <input type="number" class="input-max" value="100">
+                                    </div>
+                                </div>
+                                <div class="slider">
+                                    <div class="progress"></div>
+                                </div>
+                                <div class="range-input">
+                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
+                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                </div>
+                            </li>
+                        </ul>
+                    </details>
+                    <details class="filter_range-filter filter">
+                        <summary>Edge width</summary>
+                        <ul class="filter-list">
+                            <li class="filter-item">
+                                <div class="number-input">
+                                    <div class="field">
+                                        <input type="number" class="input-min" value="0">
+                                    </div>
+                                    <div class="field">
+                                        <input type="number" class="input-max" value="100">
+                                    </div>
+                                </div>
+                                <div class="slider">
+                                    <div class="progress"></div>
+                                </div>
+                                <div class="range-input">
+                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
+                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                </div>
+                            </li>
+                        </ul>
+                    </details>
+                    <details class="filter_rating filter_checkbox filter">
+                        <summary>Rating</summary>
+                        <ul class="filter-list">
+                            <li class="filter-item">
+                                <label class="checkbox row">
+                                    <input type="checkbox">
+                                    <p class="title">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        5/5
+                                    </p>
+                                </label>
+                            </li>
+                            <li class="filter-item">
+                                <label class="checkbox row">
+                                    <input type="checkbox">
+                                    <p class="title">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        4/5
+                                    </p>
+                                </label>
+                            </li>
+                            <li class="filter-item">
+                                <label class="checkbox row">
+                                    <input type="checkbox">
+                                    <p class="title">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        3/5
+                                    </p>
+                                </label>
+                            </li>
+                            <li class="filter-item">
+                                <label class="checkbox row">
+                                    <input type="checkbox">
+                                    <p class="title">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        2/5
+                                    </p>
+                                </label>
+                            </li>
+                            <li class="filter-item">
+                                <label class="checkbox row">
+                                    <input type="checkbox">
+                                    <p class="title">
+                                        <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
+                                        1/5
+                                    </p>
+                                </label>
+                            </li>
+                        </ul>
+                    </details>
+                </aside>
+                <section class="products">
+                    <ul class="products-list row">
+                    </ul>
+                    <div class="products__pagination row">
+                        <a href="{% get_prev_page_link request.get_full_path %}" class="arrow-prev-container {% if page_obj.has_previous %}active{% endif %}">
+                            <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="Previous Page">
+                        </a>
+                        {% get_proper_elided_page_range paginator page_obj.number as page_range %}
+                        {% for page_num in page_range %}
+                            {% if page_obj.number == page_num %}
+                                <span class="active page-item">
+                                    <span class="page-link row flex-center">{{ page_num }}</span>
+                                </span>
+                            {% else %}
+                                {% if page_num == paginator.ELLIPSIS %}
+                                    <span class="page-item">
+                                        <span class="page-link row flex-center">{{ paginator.ELLIPSIS }}</span>
+                                    </span>
+                                {% else %}
+                                    <span class="page-item">
+                                        <a class="page-link row flex-center" href="{% get_number_page_link page_num request.get_full_path %}">{{page_num}}</a>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <a href="{% get_next_page_link get_full_path %}" class="arrow-next-container {% if page_obj.has_next %}active{% endif %}">
+                            <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="Next Page">
+                        </a>
+                    </div>
+                </section>
+            </div>
+            <footer class="subfooter">
+                <div class="column">
+                    <h1>How to choose the very best dismbembering knife</h1>
+                    <p>
+                        When choosing such a product, several important factors must be considered. Especially pay attention to the fact that cutting knives, the price of which is much higher than their counterparts, are not always of high quality. Therefore, when choosing a product, consider the following features:
+                    </p>
+                    <p>
+                        The handle of such a tool should provide a tight grip.
+                        At the same time, the carving knife should not only lie well in the hand, but also not slip during operation, regardless of whether it is clean or dirty and wet with something.
+                    </p>
+                    <p>
+                        The second point is sharpening, in particular its type and angle. All products presented in our catalog have the most optimal sharpening characteristics,
+                        which is carried out using laser technology.
+                    </p>    
+                    <p>
+                        And the next important factor is the attachment of the blade to the handle, which should be as reliable as possible and create an integral system.
+                    </p>
+                    <p>
+                        And if you do not know which carving knife to choose, we recommend that you consult with our experts,
+                        who will help you make a decision and choose a product that suits your needs.
+                    </p>
+                </div>
+            </footer>
+        </main> 
+        {% include "store/footer.html" %}
+        {% products_to_json products request.user as json_products %}
+        {{json_products|json_script:'products'}}
+        {{request.user.is_authenticated|json_script:'authenticated'}}
+        <script defer type="module" src="{% static 'store/scripts/footer.js' %}"></script>
+        <script defer type="module" src="{% static 'store/scripts/products.js' %}"></script>
+    </div>
+{% endblock body %}

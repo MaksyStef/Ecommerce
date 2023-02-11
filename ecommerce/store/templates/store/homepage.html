@@ -1,0 +1,339 @@
+{% extends "store/base.html" %}
+{% load static sass_tags %}
+{% block title %}Homepage{% endblock title %}
+{% block extra_head %}
+    <!-- Extra head tags  -->
+    <link rel="stylesheet" href="https://unpkg.com/rolly.js@0.4.0/css/style.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="{% sass_src 'store/styles/homepage.scss' %}"/>
+{% endblock extra_head %}
+{% block body %}
+    <!-- Wrapper content -->
+    <div class="wrapper invisible column">
+        {% include "store/header.html" %}
+        <main class="content">
+            <!-- Section with parallax sheath -->
+            <section class="welcome-section section bg-nature row">
+                <div class="welcome-section__container section__container column">
+                    <div class="welcome-section__row_1 welcome-section__row row">
+                        <div class="welcome-section__headers column">
+                            <h1 class="welcome-section__header">Internet store of certified multipurposal knives</h1>
+                            <h2 class="welcome-section__subheader">Welcome to the official site «ZLATMAX»! We are solemn partner of the knife smithers, armories and accessory manufactures.</h2>
+                            <a href="#" class="btn-orange_glow btn-orange pushable row flex-center">See details</a>
+                        </div>
+                        <div class="welcome-section__sheath row flex-center">
+                            <div class="image-container">
+                                <img data-depth="0.3" src="{% static 'store/images/homepage/knives_sheath.png' %}" alt="knives sheath">
+                                <div class="float-plus_1 float-plus circle" data-depth="0.5"></div>
+                                <div class="float-plus_2 float-plus circle" data-depth="1.4"></div>
+                                <div class="float-plus_3 float-plus circle" data-depth="2.4"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-section__row_2 welcome-section__row row">
+                        <ul class="benefits row">
+                            <li class="benefit column flex-center">
+                                <img src="{% static 'store/images/icons/varanty-icon.svg' %}" alt="varanty">
+                                <h1 class="benefit-header">Varanty 100% will return money</h1>
+                            </li>
+                            <li class="benefit column flex-center">
+                                <img src="{% static 'store/images/icons/delivery-icon.svg' %}" alt="delivery">
+                                <h1 class="benefit-header">Delivery throughout the European Union and USA</h1>
+                            </li>
+                            <li class="benefit column flex-center">
+                                <img src="{% static 'store/images/icons/tablet-icon.svg' %}" alt="registerless">
+                                <h1 class="benefit-header">Possibility to buy goods without registration</h1>
+                            </li>
+                            <li class="benefit column flex-center">
+                                <img src="{% static 'store/images/icons/discount-icon.svg' %}" alt="discounts">
+                                <h1 class="benefit-header">Discounts for our haunters</h1>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <!-- Section with categories table -->
+            <section class="category-section section bg-white column">
+                <ul class="category-section__categories">
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Catalogue</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?subcat=dismember-knives">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?subcat=touristic">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?subcat=hunting">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_1 category-image-container" href="{% url 'store:products' %}?cat=catalogue"><img src="{% static 'store/images/homepage/categories/catalogue.png' %}" alt="category-image"></div>
+                    </li>
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Middle Blade</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_2 category-image-container" href="{% url 'store:products' %}?cat=catalogue"><img src="{% static 'store/images/homepage/categories/middleblade.png' %}" alt="category-image"></div>
+                    </li>
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Long Blade</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_3 category-image-container" href="{% url 'store:products' %}?cat=catalogue"><img src="{% static 'store/images/homepage/categories/longblade.png' %}" alt="category-image"></div>
+                    </li>
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Souvenir Production</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_4 category-image-container" href="{% url 'store:products' %}?cat=catalogue"><img src="{% static 'store/images/homepage/categories/souvenir.png' %}" alt="category-image"></div>
+                    </li>
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Accompanying Production</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_5 category-image-container" href="{% url 'store:products' %}?cat=catalogue"><img src="{% static 'store/images/homepage/categories/accompanying.png' %}" alt="category-image"></div>
+                    </li>
+                    <li class="category-section__category column">
+                        <h1 class="category-header"><a href="{% url 'store:products' %}?cat=catalogue">Manufactures</a></h1>
+                        <ul class="subcategories column">
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Dismember knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Touristic knives</a></h2></li>
+                            <li class="subcategory"><h2><a href="{% url 'store:products' %}?cat=catalogue">Hunting knives</a></h2></li>
+                        </ul>
+                        <div class="category-image-container_6 category-image-container"><img src="{% static 'store/images/homepage/categories/manufactures.png' %}" alt="category-image"></div>
+                    </li>
+                </ul>
+            </section>
+            <!-- Section with bestseller products swiper -->
+            <section class="bestsellers-section product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Bestsellers</h1>
+                    <a href="{% url 'store:products' %}?ordering=sold">More in catalogue</a>
+                </header>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+            <!-- First tuple of brandnew-discount-discount sections -->
+            <section class="brandnew-section bg-nature section">
+                <div class="brandnew-section__column column">
+                    <h1>Brandnew!</h1>
+                    <p>Welcome to the official site «ZLATMAX»! We are solemn partner of the knife smithers, armories and accessory manufactures.</p>
+                    <a href="{% url 'store:products' %}?ordering=created_at" class="orange-color">More</a>
+                </div>
+                <div class="brandnew-section__swiper-container row flex-center">
+                    <!-- swiper main container -->
+                    <div class="product-swiper swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper row">
+                            <!-- Slides -->
+                        </div>
+                        <!-- Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="discounted-section product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Discount</h1>
+                    <a href="{% url 'store:products' %}?ordering=discount">More in catalogue</a>
+                </header>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+            <section class="discounted-section product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Discount</h1>
+                    <a href="{% url 'store:products' %}?ordering=discount">More in catalogue</a>
+                </header>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+            <!-- Second tuple of brandnew-discount-discount sections -->
+            <section class="brandnew-section bg-nature section">
+                <div class="brandnew-section__column column">
+                    <h1>Brandnew!</h1>
+                    <p>Welcome to the official site «ZLATMAX»! We are solemn partner of the knife smithers, armories and accessory manufactures.</p>
+                    <a href="{% url 'store:products' %}?ordering=created_at" class="orange-color">More</a>
+                </div>
+                <div class="brandnew-section__swiper-container row flex-center">
+                    <!-- swiper main container -->
+                    <div class="product-swiper swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper row">
+                            <!-- Slides -->
+                        </div>
+                        <!-- Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="discounted-section product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Discount</h1>
+                    <a href="{% url 'store:products' %}?ordering=discount">More in catalogue</a>
+                </header>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+            <section class="discounted-section product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Discount</h1>
+                    <a href="{% url 'store:products' %}?ordering=discount">More in catalogue</a>
+                </header>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+            <!-- Section with articles -->
+            <section class="articles-section section bg-white column">
+                <h1>Our articles</h1>
+                <ul class="articles">
+                    <li class="article">
+                        <a href="#" class="column container">
+                            <div class="image-container">
+                                <img src="{% static 'store/images/homepage/articles/knives.jpg' %}" alt="Article image">
+                            </div>
+                            <h2>All about knives: how to choose precisely</h2>
+                            <time datetime="24-07-2019">24.07.2019</time>
+                        </a>
+                    </li>
+                    <li class="article">
+                        <a href="#" class="column container">
+                            <div class="image-container">
+                                <img src="{% static 'store/images/homepage/articles/flashlights.jpg' %}" alt="Article image">
+                            </div>
+                            <h2>How to get wanted flashlight</h2>
+                            <time datetime="24-07-2019">24.07.2019</time>
+                        </a>
+                    </li>
+                    <li class="article">
+                        <a href="#" class="column container">
+                            <div class="image-container">
+                                <img src="{% static 'store/images/homepage/articles/for-mistress.jpg' %}" alt="Article image">
+                            </div>
+                            <h2>Kitchen knives for mistress</h2>
+                            <time datetime="24-07-2019">24.07.2019</time>
+                        </a>
+                    </li>
+                    <li class="article">
+                        <a href="#" class="column container">
+                            <div class="image-container">
+                                <img src="{% static 'store/images/homepage/articles/for-home.jpg' %}" alt="Article image">
+                            </div>
+                            <h2>Knives for home</h2>
+                            <time datetime="24-07-2019">24.07.2019</time>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="additional-articles row">
+                    <li class="article">
+                        <div class="image-container row flex-center">
+                            <img src="{% static 'store/images/homepage/articles/tactical-flashlights.jpg' %}" alt="Article image">
+                        </div>
+                        <div class="column">
+                            <h2>Tactical flashlights</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                            <a href="#" class="btn-orange pushable row flex-center">Details</a>
+                        </div>
+                    </li>
+                    <li class="article">
+                        <div class="image-container row flex-center">
+                            <img src="{% static 'store/images/homepage/articles/headlamps.jpg' %}" alt="Article">
+                        </div>
+                        <div class="column">
+                            <h2>Headlamps</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                            <a href="#" class="btn-orange pushable row flex-center">Details</a>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="additional-articles phone column">
+                    <li class="article">
+                        <h2>Tactical flashlights</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                        <div class="image-container row flex-center">
+                            <img src="{% static 'store/images/homepage/articles/tactical-flashlights.jpg' %}" alt="Article image">
+                        </div>
+                        <a href="#" class="btn-orange pushable row flex-center">Details</a>
+                    </li>
+                    <li class="article">
+                        <h2>Headlamps</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                        <div class="image-container row flex-center">
+                            <img src="{% static 'store/images/homepage/articles/headlamps.jpg' %}" alt="Article">
+                        </div>
+                        <a href="#" class="btn-orange pushable row flex-center">Details</a>
+                    </li>
+                </ul>
+            </section>
+            <!-- Section with flashlights -->
+            <section class="product-section section bg-white column">
+                <header class="product-section__header row">
+                    <h1>Flashlights</h1>
+                    <a href="{% url 'store:products' %}?supercategory_id=15">More in catalogue</a>
+                </header>
+                <ul class="flashlights">
+                    <!-- Appended via JS -->
+                </ul>
+            </section>
+        </main> 
+        {% include "store/footer.html" %}
+        {{request.user.is_authenticated|json_script:'authenticated'}}
+
+        {% products_to_json: bestsellers, request.user %}
+
+        {% products_to_json: brandnews_1, request.user %}
+        {% products_to_json: brandnews_2, request.user %}
+
+        {% products_to_json: discounted,  request.user %}
+        {% products_to_json: discounted,  request.user %}
+        {% products_to_json: discounted,  request.user %}
+        {% products_to_json: discounted,  request.user %}
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+        <script type="module" defer src="{% static 'store/scripts/footer.js' %}"></script>
+        <script type="module" defer src="{% static 'store/scripts/homepage.js' %}"></script>
+    </div>
+{% endblock body %}

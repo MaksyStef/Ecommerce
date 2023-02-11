@@ -1,0 +1,57 @@
+// ================= Import main styles =================
+@import './main.scss';
+
+// ================= Styling =================
+.content-container {
+    width: 100%;
+    gap: 24px;
+    @include default-padding();
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.subheader {
+    width: 100%;
+    gap: rem(20);
+    @include adaptiv-value(padding-top, 24, 16, 1);
+    @include adaptiv-value(padding-bottom, 24, 16, 1);
+    @include adaptiv-value(padding-left, 128, 20, 1);
+    @include adaptiv-value(padding-right, 128, 20, 1);
+
+    .hierarchy-links {
+        gap: rem(30);
+        a {
+            position: relative;
+            color: grey; 
+
+            &:active, &:hover, &.current {
+                color: var(--orange-color);
+                &::after {
+                    filter: grayscale(0);
+                }
+            }
+            &.current {
+                &::after {
+                    display: none;
+                }
+            }
+
+            &::after {
+                content: '';
+                pointer-events: none;
+                position: absolute;
+                right:rem(-15);
+                top: 50%;
+                translate: 50% -52.5%;
+                width: 9px;
+                height: 17px;
+                filter: grayscale(1);
+                background-image: url('../images/icons/arrow-icon.svg');
+                scale: 0.8;
+            }
+        }
+    }
+}

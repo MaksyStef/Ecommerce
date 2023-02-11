@@ -1,0 +1,17 @@
+<svg width="20" height="19" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve">
+ <desc>Created with Fabric.js 3.5.0</desc>
+
+ <g>
+  <title>Layer 1</title>
+  <g stroke="null" id="svg_13">
+   <g stroke="null" transform="matrix(0.245032 0 0 0.239592 525.044 602.564)" id="88658">
+    <path stroke=" rgb(232,170,49)" vector-effect="non-scaling-stroke" d="m-2100.65889,-2453.32044l-1.4737,-1.0754l-1.4737,1.0754l-23.7353,17.3204l8.9996,-28.2846l0.5564,-1.7485l-1.5013,-1.055l-23.43977,-16.4712l28.46907,0l1.8019,0l0.5698,-1.7094l9.7533,-29.25985l9.7533,29.25985l0.5698,1.7094l1.8019,0l28.4691,0l-23.4398,16.4712l-1.5013,1.055l0.5564,1.7485l8.9996,28.2846l-23.7353,-17.3204z" stroke-linecap=" butt" stroke-dasharray=" none" stroke-dashoffset="0" stroke-linejoin=" miter" stroke-miterlimit="4" fill=" none" fill-rule=" nonzero" id="svg_2"/>
+   </g>
+   <g stroke="null" transform="matrix(-0.0588373 0 0 -0.0191627 531.234 605.638)" id="322894">
+    <path stroke=" none" vector-effect="non-scaling-stroke" d="m8778.45692,31026.68288l163,0l-81.5,-163l-81.5,163z" stroke-linecap=" butt" stroke-dasharray=" none" stroke-dashoffset="0" stroke-linejoin=" miter" stroke-miterlimit="4" fill=" rgb(232,170,49)" fill-rule=" nonzero" id="svg_5"/>
+   </g>
+   <path stroke="null" fill="#e8aa31" d="m10.22163,14.31966l-6.44131,4.63147l2.45699,-7.63326l3.98433,3.00179l-0.00001,0z" id="svg_9"/>
+   <path stroke="null" fill="#e8aa31" d="m13.67769,11.3026l2.44906,7.61998l-6.44484,-4.60007l3.99577,-3.01993l0.00001,0.00001z" id="svg_12"/>
+  </g>
+ </g>
+</svg>
