@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'rest_framework',
-    
+    'sass_processor',
     'store',
     'account',
     'api',
@@ -125,6 +125,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR.joinpath('static/')
 
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
+
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR.joinpath('media/')
 
@@ -132,3 +139,5 @@ MEDIA_ROOT = BASE_DIR.joinpath('media/')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'account.Account'

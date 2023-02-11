@@ -13,12 +13,8 @@ class AccountManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
-        user_fav = Favourite()
-        user_cart = Cart()
-        user_fav.save()
-        user_cart.save()
-        user.cart = user_cart
-        user.favourite = user_fav
+        user.cart = Cart.objects.create()
+        user.favourite = Favourite.objects.create()
         user.save()
         return user
 

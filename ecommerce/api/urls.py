@@ -1,6 +1,6 @@
 from django.urls import path
 
-app_name = "account"
+app_name = 'api'
 
 urlpatterns = [
     
