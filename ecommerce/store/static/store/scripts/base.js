@@ -56,18 +56,17 @@ export const setStars = (rating, cardRating) => {
             break;
     }
 }
-export const rate = async (rating, cardRating, cardId) => {
+export const rate = async (rating, cardRating, cardSlug) => {
     if (authenticated === true) {
-        await fetch('/product/rate', {
+        await fetch(`/api/product/{${cardSlug.value}}/rate/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body:
-                `{
-                    "product_id": ${cardId.value},
-                    "rating" : ${rating},
-                }`,
+                JSON.stringify({
+                    value : rating,
+                }),
         });
         let personalRating = cardId.parentElement.querySelector('.product-card__personal-rating')
         if (cardId.parentNode.contains(personalRating) === true) {
@@ -98,7 +97,7 @@ export function appendProductCard(container, product) {
     // Fill card's parts
     cardId.setAttribute('value', product['rating']);
     cardImage.parentElement.href = product['url'];
-    let imageSource = (product['images'].length > 0) ? product['images'].keys()[0] : 'https://www.discountcutlery.net/assets/images/NewProductImages/FOX620B.jpg';
+    let imageSource = product['image_general'] ? product['image_general'] : 'https://www.discountcutlery.net/assets/images/NewProductImages/FOX620B.jpg';
     cardImage.setAttribute('src', imageSource);
     cardTitle.innerText = product["title"];
     cardSize.innerText = product["size"];
@@ -148,3 +147,5 @@ export const toggleNewsletter = (toggler) => {
         toChange.innerText = 'Unsign newsletter';
     }
 }
+export const pullProducts = async (urlQuery) => await fetch('/api/product/' + `?${urlQuery}`)
+                                                    .then(response => response.json())

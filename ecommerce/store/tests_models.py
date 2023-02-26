@@ -27,7 +27,7 @@ class ProductTestCase(TestCase):
             discount    = 10,
             sellable    = True,
             description = 'Test product description',
-            article     = '00001284',
+            article     = '0000128411111111',
             in_stock    = 10,
         )
 

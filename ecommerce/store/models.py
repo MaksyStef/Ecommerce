@@ -105,9 +105,7 @@ class Subcategory(AbstractCategory):
     def get_absolute_url(self, class_name:str):
         """ Returns subcategory url of certain Product subclass """
         return f'{reverse("store:products")}/{class_name}/{self.slug}'
-    def get_products(self, ordering:str, **filters):
-        """ Return all subcats related to Category object if not given Subcategory QuerySet """
-        qst = Product.get_all_child_products(self, ordering)
+
 
 class Category(AbstractCategory):
     is_filter = models.BooleanField(default=False)
@@ -138,7 +136,7 @@ class Product(PolymorphicModel):
     title = models.CharField(verbose_name="Product title", max_length=255)
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False,)
     description = models.TextField(verbose_name="Product description")
-    article = models.CharField(max_length=18, default='')
+    article = models.SmallIntegerField(validators=[MaxValueValidator(999999999999999999), MinValueValidator(0)])
     votes = models.ManyToManyField('Vote')
     subcats = models.ManyToManyField('Subcategory')
     cats = models.ManyToManyField('Category', editable=False)

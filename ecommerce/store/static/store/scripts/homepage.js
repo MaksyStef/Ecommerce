@@ -4,18 +4,7 @@ let scene = document.querySelector('.welcome-section__sheath > .image-container'
 const sheathParallax = new Parallax(scene);
 
 
-let bestsellerProducts = JSON.parse(JSON.parse(document.querySelector('#bestsellers').textContent))
-const bestsellerSwiper = new Swiper('.bestsellers-section .swiper', {
-    // Optional parameters
-    loop: true,
-    spaceBetween: 1024,
-
-    // If we need pagination
-    pagination: {
-        el: '.swiper-pagination',
-    },
-});
-let fillProductsSwiper = (products, swiper) => {
+const fillProductsSwiper = (products, swiper) => {
     var slides = []
     var cond;
     if (window.matchMedia('(min-width:0px)').matches) {
@@ -28,7 +17,7 @@ let fillProductsSwiper = (products, swiper) => {
         cond = 4;
     }
 
-    for (const [index, product] of products.entries()) {
+    for (const [index, product] of Object.entries(products)) {
         if (index === 0 || index % cond === 0) {
             var slide = document.createElement('div');
             var container = document.createElement('div');
@@ -41,7 +30,7 @@ let fillProductsSwiper = (products, swiper) => {
     }
     swiper.appendSlide(slides);
 }
-let fillBrandnewProductsSwiper = (products, swiper) => {
+const fillBrandnewProductsSwiper = (products, swiper) => {
     var slides = []
     var cond;
     if (window.matchMedia('(min-width:0px)').matches) {
@@ -54,7 +43,7 @@ let fillBrandnewProductsSwiper = (products, swiper) => {
         cond = 3;
     }
 
-    for (const [index, product] of products.entries()) {
+    for (const [index, product] of Object.entries(products)) {
         if (index === 0 || index % cond === 0) {
             var slide = document.createElement('div');
             var container = document.createElement('div');
@@ -67,14 +56,25 @@ let fillBrandnewProductsSwiper = (products, swiper) => {
     }
     swiper.appendSlide(slides);
 }
-fillProductsSwiper(bestsellerProducts, bestsellerSwiper);
 
 
-let brandnewProducts = [],
-    brandnewSwiperContainers = document.querySelectorAll('.brandnew-section__swiper-container');
+const bestsellerSwiper = new Swiper('.bestsellers-section .swiper', {
+    // Optional parameters
+    loop: true,
+    spaceBetween: 1024,
 
-brandnewProducts.push(JSON.parse(JSON.parse(document.querySelector('#brandnew_1').textContent)));
-brandnewProducts.push(JSON.parse(JSON.parse(document.querySelector('#brandnew_2').textContent)));
+    // If we need pagination
+    pagination: {
+        el: '.swiper-pagination',
+    },
+});
+
+let products = await base.pullProducts("ordering=sold&limit=16")
+fillProductsSwiper(products, bestsellerSwiper);
+
+
+products = await pullProducts("ordering=created_at&limit=9")
+let brandnewSwiperContainers = document.querySelectorAll('.brandnew-section__swiper-container');
 
 for (let [index, products] of brandnewProducts.entries()) {
     let swipe = new Swiper(brandnewSwiperContainers[index].querySelector('.product-swiper'), {
@@ -92,11 +92,6 @@ for (let [index, products] of brandnewProducts.entries()) {
 
 let discountedProducts = [],
     discountedSwiperContainers = document.querySelectorAll('.discounted-section');
-
-discountedProducts.push(JSON.parse(JSON.parse(document.querySelector("#discounted_1").textContent)));
-discountedProducts.push(JSON.parse(JSON.parse(document.querySelector("#discounted_2").textContent)));
-discountedProducts.push(JSON.parse(JSON.parse(document.querySelector("#discounted_3").textContent)));
-discountedProducts.push(JSON.parse(JSON.parse(document.querySelector("#discounted_4").textContent)));
 
 for (let [index, products] of discountedProducts.entries()) {
     let swipe = new Swiper(discountedSwiperContainers[index].querySelector('.product-swiper'), {

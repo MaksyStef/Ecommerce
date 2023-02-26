@@ -1,5 +1,4 @@
 from django.contrib.auth.base_user import BaseUserManager
-from store.models import Favourite, Cart
 
 
 # Create your managers here
@@ -13,8 +12,6 @@ class AccountManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
-        user.cart = Cart.objects.create()
-        user.favourite = Favourite.objects.create()
         user.save()
         return user
 

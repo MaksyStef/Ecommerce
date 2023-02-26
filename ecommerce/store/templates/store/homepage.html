@@ -321,16 +321,6 @@
         {% include "store/footer.html" %}
         {{request.user.is_authenticated|json_script:'authenticated'}}
 
-        {% products_to_json: bestsellers, request.user %}
-
-        {% products_to_json: brandnews_1, request.user %}
-        {% products_to_json: brandnews_2, request.user %}
-
-        {% products_to_json: discounted,  request.user %}
-        {% products_to_json: discounted,  request.user %}
-        {% products_to_json: discounted,  request.user %}
-        {% products_to_json: discounted,  request.user %}
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
         <script type="module" defer src="{% static 'store/scripts/footer.js' %}"></script>
