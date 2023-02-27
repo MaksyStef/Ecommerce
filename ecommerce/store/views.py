@@ -57,37 +57,36 @@ class ProductsView(ListView, ContextMixin):
     def get_queryset(self):
         request = self.request
 
+        queryset = Product.objects.filter(sellable=True)
+
         if request.GET.get('subcategory_id'):
-            queryset = Product.get_all_child_products()
+            queryset = queryset.filter(subcats__in=[get_object_or_404(Subcategory, id=int(request.GET.get('subcategory_id')))])
 
         elif request.GET.get('category_id'):
-            queryset = queryset.filter(cat_id=request.GET.get('category_id'))
+            queryset = queryset.filter(cats__in=[get_object_or_404(Category, id=int(request.GET.get('category_id')))])
         
         if request.GET.get('ordering'):
             queryset = queryset.order_by(request.GET.get('ordering'))
         
-        if request.GET.get('count'):
-            lim = int(request.GET.get('count'))
-            queryset = queryset[:lim]
-
         if request.GET.get('price_span'):
             cheapest, expensiest = request.GET.get('price_span').split('_')
             queryset = queryset.filter(price__lte=int(cheapest), price__gte=int(expensiest))
         return queryset
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.extra_context.update({
-                'prods_cat': Subcategory.objects.get(id=int(request.GET.get('subcategory_id')))
-            })
-        except Subcategory.DoesNotExist:
-            pass
-        try:
-            self.extra_context.update({
-                'prods_cat': Category.objects.get(id=int(request.GET.get('category_id')))
-            })
-        except Category.DoesNotExist:
-            pass
+        if request.GET.get('subcategory_id') or request.GET.get('category_id'):
+            try:
+                self.extra_context.update({
+                    'prods_cat': Subcategory.objects.get(id=int(request.GET.get('subcategory_id')))
+                })
+            except Subcategory.DoesNotExist:
+                pass
+            try:
+                self.extra_context.update({
+                    'prods_cat': Category.objects.get(id=int(request.GET.get('category_id')))
+                })
+            except Category.DoesNotExist:
+                pass
         return super().get(request, *args, **kwargs)
 
 

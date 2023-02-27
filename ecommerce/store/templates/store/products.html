@@ -1,6 +1,6 @@
 {% extends "store/base.html" %}
 {% load static sass_tags %}
-{% load products_tags store_pagination %}
+{% load store_pagination %}
 {% block title %}{% if prods_cat %}{{prods_cat.title|title}}{% else %}Products{% endif %}{% endblock title %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% sass_src 'store/styles/products.scss' %}">
@@ -259,8 +259,6 @@
             </footer>
         </main> 
         {% include "store/footer.html" %}
-        {% products_to_json products request.user as json_products %}
-        {{json_products|json_script:'products'}}
         {{request.user.is_authenticated|json_script:'authenticated'}}
         <script defer type="module" src="{% static 'store/scripts/footer.js' %}"></script>
         <script defer type="module" src="{% static 'store/scripts/products.js' %}"></script>

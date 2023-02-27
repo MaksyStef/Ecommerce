@@ -76,10 +76,15 @@ class Vote(models.Model):
     )
 
 class AbstractCategory(ABCModel):
-    """ 
-        Categories ancestor with fields of title, slug and created_at timestamp.
-        
-        Creates slug on save, orders categories by created_at, return title as representative.
+    """
+    This is a model for representing abstract categories in Django. It contains the fields title, slug, and created_at.
+
+    title: character field of maximum length 50
+    slug: slug field which takes on a unique value using the uuid module each time a new record is created
+    created_at: a date-time field set to null by default and not editable once populated
+    
+    save(): creates a unique slug value, populates created_at with the current timezone, and saves the object.
+    str(self): string representation of the object uses the title
     """
     title = models.CharField(max_length=50)
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False,)
@@ -118,8 +123,52 @@ class Category(AbstractCategory):
 
 
 class Product(PolymorphicModel):
-    """ 
-        Product parent model.
+    """
+    This model contains fields pertinent to a product.
+
+    Fields
+    price - A FloatField containing the price of the product. The value must be at least 0.
+
+    discount - An IntegerField containing the percentage discount applied to the product. Its validators ensure that it is between 0 and 100.
+
+    created_at - A DateTimeField denoting when the product was created. It has the auto_now and auto_created attribute set to true.
+
+    sellable - A BooleanField indicating whether the product can still be bought, with a default value of True.
+
+    sold - A PositiveIntegerField indicating how many have been sold, with a default value of 0.
+
+    bonus_points - A PositiveIntegerField indicating the bonus points earned by purchasing the product, which cannot be edited, and defaults to null.
+
+    title - A CharField containing a title string, with a max length of 255.
+
+    slug - A SlugField containing an unique slug, and defaults to an UUID. It is not editable.
+
+    description - A TextField containing a description of the item.
+
+    article - A SmallIntegerField containing a unique identifier representing the article. Its validators ensures it is within the range from 0 to 99999999999999.
+
+    votes - A ManyToManyField, referencing the Vote model.
+
+    subcats - A ManyToManyField, referencing the Subcategory model.
+
+    cats - A ManyToManyField, referencing the Category model, which is not editable.
+
+    in_stock - A PositiveIntegerField indicating the quantity of the product in stock, with a default value of 0.
+
+    image_general - An ImageField containing a general image uploaded to store/images/products/general/, with its default values set to false.
+
+    Implementation Notes
+    In order to make sure that the categories are correctly updated after adding subcategories, we use the save() method override. With each save, we then update the cats field which references the Category model.
+
+    The rate() method helps rate on the basis of rating provided by users and adding/updating votes.
+
+    The get_rating() returns the average rating of the product with precision two.
+
+    The get_personal_rating() returns the personal rating of a user associated with the product.
+
+    The get_images() returns a dictionary mapping all the images associated with the product.
+
+    Finally, __str__ overrides the strings representation of the product object.
     """
     price = models.FloatField(verbose_name="Product price", validators=[MinValueValidator(0)])
     discount = models.IntegerField(
@@ -202,14 +251,68 @@ class Product(PolymorphicModel):
 
 
 class ProductChildMixin:
+    """
+    ProductChildMixin Documentation
+    This mixin is used when working with Django models to create an absolute URL to a newly created product.
+
+    Usage:
+    Simply inherit from this ProductChildMixin in the model class for which you would like the absolute URL path to be generated.
+
+    Methods
+    get_absolute_url_to_type() - This method returns a string of absolute json API url in terms of store products.
+    get_absolute_url() - This method returns a string of absolute url of specific product.
+    This method requires a slug field in your model.
+
+    """
     def get_absolute_url_to_type(self):
         return f"{reverse('store:products')}/{self.__class__.__name__}"
 
     def get_absolute_url(self):
         return f"{reverse('store:product')}/{self.__class__.__name__}/{self.slug}"
-        
+
 
 class Knife(Product, ProductChildMixin):
+    """
+    The Knife model is an extension of Product model and also includes the ProductChildMixin.
+
+    Fields
+
+    total_length
+    type: PositiveIntegerField
+    default value: 0
+
+    edge_length
+    type: PositiveIntegerField
+    default value: 0
+
+    edge_width
+    type: PositiveIntegerField
+    default value: 0
+
+    image_edge
+    type: ImageField
+    upload path: store/images/products/knives/edge/
+    nullable: True
+    blank: True
+
+    image_case
+    type: ImageField
+    upload path: store/images/products/knives/case/
+    nullable: True
+    blank: True
+
+    image_handle
+    type: ImageField
+    upload path: store/images/products/knives/handle/
+    nullable: True
+    blank: True
+
+    image_guard_and_back
+    type: ImageField
+    upload path: store/images/products/knives/guard_and_back/
+    nullable: True
+    blank: True
+    """
     total_length = models.PositiveIntegerField(default=0)
     edge_length = models.PositiveIntegerField(default=0)
     edge_width = models.PositiveIntegerField(default=0)
@@ -217,8 +320,22 @@ class Knife(Product, ProductChildMixin):
     image_case = models.ImageField(upload_to="store/images/products/knives/case/", null=True, blank=True)
     image_handle = models.ImageField(upload_to="store/images/products/knives/handle/", null=True, blank=True)
     image_guard_and_back = models.ImageField(upload_to="store/images/products/knives/guard_and_back/", null=True, blank=True)
- 
+
+
 class Melee(Product, ProductChildMixin):
+    """
+    The Melee model subclassed from the Product and ProductChildMixin models. This model is used to store information related to melee weapons. It contains the following fields:
+
+    total_length : PositiveIntegerField - The total length of the weapon. (default 0)
+    edge_length : PositiveIntegerField - The length of the weapon's edge. (default 0)
+    edge_width : PositiveIntegerField - The width of the weapon's edge. (default 0)
+    spike_thickness : PositiveIntegerField - The thickness of any spikes on the weapon. (default 0)
+    image_edge : ImageField - An image file for the weapon's edge. (upload_to="store/images/products/melee/edge/")
+    image_case : ImageField - An image file for the weapon's case. (upload_to="store/images/products/melee/case/")
+    image_handle : ImageField - An image file for handle of the weapon. (upload_to="store/images/products/melee/handle/")
+    image_guard_and_back : ImageField - An image file for guard and back of the weapon. (upload_to="store/images/products/melee/guard_and_back/")
+
+    """
     total_length = models.PositiveIntegerField(default=0)
     edge_length = models.PositiveIntegerField(default=0)
     edge_width = models.PositiveIntegerField(default=0)
@@ -230,10 +347,39 @@ class Melee(Product, ProductChildMixin):
 
 
 class Souvenir(Product, ProductChildMixin):
+    """
+    This is a class that inherits from the base Product class and includes the ProductChildMixin, making it part of a product hierarchy.
+
+    Class Details:
+
+    Name: Souvenir
+    Inherits from: Product and ProductChildMixin
+    Functions: None
+    Usage: This class is used as part of a product hierarchy to provide additional functionality.
+    """
     pass
 
 
 class Flashlight(Product, ProductChildMixin):
+    """
+    Fields
+    power - PositiveIntegerField to store the power of the product. Default value is 0.
+    battery_capacity - PositiveIntegerField to store the battery capacity of the product. Default value is 0.
+    width - PositiveIntegerField to store the width of the product. Default value is 0.
+    length - PositiveIntegerField to store the length of the product. Default value is 0.
+    thickness - PositiveIntegerField to store the thickness of the product. Default value is 0.
+    materials - PositiveIntegerField to store the materials used in the product. Default value is 0.
+    Validations
+
+    Validators
+    All fields must be of type PositiveIntegerField.
+    All fields have a default value of 0.
+
+    Methods
+    get_product_dimensions() - Returns a tuple containing the width, length, and thickness of the product.
+    get_product_materials() - Returns a list of strings containing the names of the materials used in the product.
+    get_product_power() - Returns an integer representing the power of the product.
+    """
     power = models.PositiveIntegerField(default=0)
     battery_capacity = models.PositiveIntegerField(default=0)
     width = models.PositiveIntegerField(default=0)
@@ -243,4 +389,14 @@ class Flashlight(Product, ProductChildMixin):
 
 
 class Accompanying(Product, ProductChildMixin):
+    """
+    This is a class that inherits from the base Product class and includes the ProductChildMixin, making it part of a product hierarchy.
+
+    Class Details:
+
+    Name: Accompanying
+    Inherits from: Product and ProductChildMixin
+    Functions: None
+    Usage: This class is used as part of a product hierarchy to provide additional functionality.
+    """
     pass
