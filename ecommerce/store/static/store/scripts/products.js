@@ -2,7 +2,7 @@ import { appendProductCard } from "./base.js"
 
 
 // Fill product cards
-let products = JSON.parse(JSON.parse(document.querySelector('#products').textContent));
+let products = JSON.parse(document.querySelector('#products').textContent);
 var container = document.querySelector('.products-list');
 for (let product of products) {
     let item = document.createElement('li');

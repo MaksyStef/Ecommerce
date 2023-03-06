@@ -6,13 +6,18 @@ from account.models import Account
 # Serializers
 class ProductSerializer(serializers.ModelSerializer):
 
-    url = serializers.SerializerMethodField(source='get_url')
+    id = serializers.ReadOnlyField()
+    url = serializers.SerializerMethodField('get_url')
     personal_rating = serializers.SerializerMethodField('personal_rating_func')
     article = serializers.SerializerMethodField('format_article')
+    votes_count = serializers.SerializerMethodField('_votes_count')
+    size = serializers.SerializerMethodField('_get_size')
+    materials = serializers.SerializerMethodField('_get_materials')
 
     class Meta:
         model = Product
         fields = [
+            'id',
             'title',
             'slug',
             'url',
@@ -24,6 +29,9 @@ class ProductSerializer(serializers.ModelSerializer):
             'personal_rating',
             'image_general',
             'in_stock',
+            'votes_count',
+            'size',
+            'materials',
         ]
 
     def personal_rating_func(self, obj):
@@ -40,3 +48,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_url(self, obj):
         return obj.get_absolute_url()
+
+    def _votes_count(self, obj):
+        return obj.votes.all().count()
+
+    def _get_size(self, obj):
+        return obj.get_size() if hasattr(obj, 'get_size') else ''
+
+    def _get_materials(self, obj):
+        return obj.get_materials() if hasattr(obj, 'get_materials') else ''

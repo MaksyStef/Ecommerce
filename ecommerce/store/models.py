@@ -186,11 +186,12 @@ class Product(PolymorphicModel):
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False,)
     description = models.TextField(verbose_name="Product description")
     article = models.SmallIntegerField(validators=[MaxValueValidator(999999999999999999), MinValueValidator(0)])
-    votes = models.ManyToManyField('Vote')
-    subcats = models.ManyToManyField('Subcategory')
+    votes = models.ManyToManyField('Vote', blank=True)
+    subcats = models.ManyToManyField('Subcategory', blank=True)
     cats = models.ManyToManyField('Category', editable=False)
     in_stock = models.PositiveIntegerField(default=0)
     image_general = models.ImageField(upload_to='store/images/products/general/', null=True, blank=True)
+    rating = models.PositiveIntegerField(default=0, editable=False, blank=True)
 
     class Meta:
         ordering = ['created_at']
@@ -244,7 +245,9 @@ class Product(PolymorphicModel):
                 f'{field.name}':field.url if hasattr(field, 'url') else None,
             })
         return images
-
+    
+    def get_absolute_url(self):
+        return reverse('store:product', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
@@ -266,9 +269,6 @@ class ProductChildMixin:
     """
     def get_absolute_url_to_type(self):
         return f"{reverse('store:products')}/{self.__class__.__name__}"
-
-    def get_absolute_url(self):
-        return f"{reverse('store:product')}/{self.__class__.__name__}/{self.slug}"
 
 
 class Knife(Product, ProductChildMixin):
@@ -320,7 +320,10 @@ class Knife(Product, ProductChildMixin):
     image_case = models.ImageField(upload_to="store/images/products/knives/case/", null=True, blank=True)
     image_handle = models.ImageField(upload_to="store/images/products/knives/handle/", null=True, blank=True)
     image_guard_and_back = models.ImageField(upload_to="store/images/products/knives/guard_and_back/", null=True, blank=True)
+    materials = models.CharField(max_length=99, default="")
 
+    def get_size(self):
+        return f"{self.total_length}x{self.edge_width}"
 
 class Melee(Product, ProductChildMixin):
     """
@@ -329,7 +332,7 @@ class Melee(Product, ProductChildMixin):
     total_length : PositiveIntegerField - The total length of the weapon. (default 0)
     edge_length : PositiveIntegerField - The length of the weapon's edge. (default 0)
     edge_width : PositiveIntegerField - The width of the weapon's edge. (default 0)
-    spike_thickness : PositiveIntegerField - The thickness of any spikes on the weapon. (default 0)
+    edge_thickness : PositiveIntegerField - The thickness of the weapon's edge. (default 0)
     image_edge : ImageField - An image file for the weapon's edge. (upload_to="store/images/products/melee/edge/")
     image_case : ImageField - An image file for the weapon's case. (upload_to="store/images/products/melee/case/")
     image_handle : ImageField - An image file for handle of the weapon. (upload_to="store/images/products/melee/handle/")
@@ -339,11 +342,15 @@ class Melee(Product, ProductChildMixin):
     total_length = models.PositiveIntegerField(default=0)
     edge_length = models.PositiveIntegerField(default=0)
     edge_width = models.PositiveIntegerField(default=0)
-    spike_thickness = models.PositiveIntegerField(default=0)
+    edge_thickness = models.PositiveIntegerField(default=0)
     image_edge = models.ImageField(upload_to="store/images/products/melee/edge/", null=True, blank=True)
     image_case = models.ImageField(upload_to="store/images/products/melee/case/", null=True, blank=True)
     image_handle = models.ImageField(upload_to="store/images/products/melee/handle/", null=True, blank=True)
     image_guard_and_back = models.ImageField(upload_to="store/images/products/melee/guard_and_back/", null=True, blank=True)
+    materials = models.CharField(max_length=99, default="")
+
+    def get_size(self):
+        return f"{self.total_length}x{self.edge_width} ({self.edge_thickness})"
 
 
 class Souvenir(Product, ProductChildMixin):
@@ -357,7 +364,7 @@ class Souvenir(Product, ProductChildMixin):
     Functions: None
     Usage: This class is used as part of a product hierarchy to provide additional functionality.
     """
-    pass
+    materials = models.CharField(max_length=99, default="", null=True)
 
 
 class Flashlight(Product, ProductChildMixin):
@@ -369,7 +376,6 @@ class Flashlight(Product, ProductChildMixin):
     length - PositiveIntegerField to store the length of the product. Default value is 0.
     thickness - PositiveIntegerField to store the thickness of the product. Default value is 0.
     materials - PositiveIntegerField to store the materials used in the product. Default value is 0.
-    Validations
 
     Validators
     All fields must be of type PositiveIntegerField.
@@ -385,7 +391,7 @@ class Flashlight(Product, ProductChildMixin):
     width = models.PositiveIntegerField(default=0)
     length = models.PositiveIntegerField(default=0)
     thickness = models.PositiveIntegerField(default=0)
-    materials = models.PositiveIntegerField(default=0)
+    materials = models.CharField(max_length=99, default="")
 
 
 class Accompanying(Product, ProductChildMixin):

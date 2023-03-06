@@ -3,6 +3,7 @@ from django.shortcuts import (
     redirect,
     get_object_or_404,
 )
+from django.utils.text import slugify
 from django.views.generic import (
     View,
     TemplateView,
@@ -24,6 +25,7 @@ from store.models import (
     Category,
 )
 
+from api.serializers import ProductSerializer
 import json
 
 # Mixins
@@ -93,9 +95,10 @@ class ProductsView(ListView, ContextMixin):
 class CertainProductsView(ListView, ContextMixin):
     template_name = 'store/products.html'
     context_object_name = 'products'
+    paginate_by = 24
 
     def get(self, request, product_type, *args, **kwargs):
-        subs = filter(lambda cls: cls.__name__ == product_type, Product.__subclasses__())
+        subs = list(filter(lambda cls: slugify(cls.__name__) == product_type, Product.__subclasses__()))
         self.model = subs[0] if len(subs) > 0 else None
         if not self.model:
             raise HttpResponse(status=404)

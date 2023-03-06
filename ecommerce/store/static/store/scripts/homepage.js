@@ -7,44 +7,49 @@ const sheathParallax = new Parallax(scene);
 const fillProductsSwiper = (products, swiper) => {
     var slides = []
     var cond;
-    if (window.matchMedia('(min-width:0px)').matches) {
-        cond = 1;
-    }
-    if (window.matchMedia('(min-width:768px)').matches) {
-        cond = 2;
-    }
-    if (window.matchMedia('(min-width:1440px)').matches) {
-        cond = 4;
+    switch (true) {
+        case window.innerWidth >= 1440:
+            cond = 4;
+            break;
+        case window.innerWidth >= 768:
+            cond = 2;
+            break;
+        case window.innerWidth >= 1:
+            cond = 1;
+            break;
     }
 
-    for (const [index, product] of Object.entries(products)) {
-        if (index === 0 || index % cond === 0) {
+    for (let i = 0; i < 16; i++) {
+        var container;
+        if (i === 0 || i % cond === 0) {
             var slide = document.createElement('div');
-            var container = document.createElement('div');
-            slide.classList.add('swiper-slide')
-            container.classList.add('products-row')
-            slide.append(container)
-            slides.push(slide);
+            slide.classList.add('swiper-slide');
+            container = document.createElement('div');
+            container.classList.add('products-row');
         }
-        base.appendProductCard(container, product);
-    }
+        base.appendProductCard(container, products[i]);
+        slide.appendChild(container);
+        slides.push(slide);
+      }
     swiper.appendSlide(slides);
 }
 const fillBrandnewProductsSwiper = (products, swiper) => {
     var slides = []
     var cond;
-    if (window.matchMedia('(min-width:0px)').matches) {
-        cond = 1;
-    }
-    if (window.matchMedia('(min-width:768px)').matches) {
-        cond = 2;
-    }
-    if (window.matchMedia('(min-width:1440px)').matches) {
-        cond = 3;
+    switch (true) {
+        case window.innerWidth >= 1440:
+            cond = 3;
+            break;
+        case window.innerWidth >= 768:
+            cond = 2;
+            break;
+        case window.innerWidth >= 1:
+            cond = 1;
+            break;
     }
 
-    for (const [index, product] of Object.entries(products)) {
-        if (index === 0 || index % cond === 0) {
+    for (let i = 0; i < 9; i++) {
+        if (i === 0 || i % cond === 0) {
             var slide = document.createElement('div');
             var container = document.createElement('div');
             slide.classList.add('swiper-slide')
@@ -52,11 +57,10 @@ const fillBrandnewProductsSwiper = (products, swiper) => {
             slide.append(container)
             slides.push(slide);
         }
-        base.appendProductCard(container, product);
+        base.appendProductCard(container, products[i]);
     }
     swiper.appendSlide(slides);
 }
-
 
 const bestsellerSwiper = new Swiper('.bestsellers-section .swiper', {
     // Optional parameters
@@ -73,11 +77,8 @@ let products = await base.pullProducts("ordering=sold&limit=16")
 fillProductsSwiper(products, bestsellerSwiper);
 
 
-products = await pullProducts("ordering=created_at&limit=9")
-let brandnewSwiperContainers = document.querySelectorAll('.brandnew-section__swiper-container');
-
-for (let [index, products] of brandnewProducts.entries()) {
-    let swipe = new Swiper(brandnewSwiperContainers[index].querySelector('.product-swiper'), {
+for (let [i, brandnewContainer] of Object.entries(document.querySelectorAll('.brandnew-section__swiper-container'))) {
+    let swipe = new Swiper(brandnewContainer.querySelector('.product-swiper'), {
         // Optional parameters
         loop: true,
         spaceBetween: 1024,
@@ -87,14 +88,12 @@ for (let [index, products] of brandnewProducts.entries()) {
             el: '.swiper-pagination',
         },
     });
+    products = await base.pullProducts(`ordering=created_at&limit=9&offset=${i * 9}`)
     fillBrandnewProductsSwiper(products, swipe)
 }
 
-let discountedProducts = [],
-    discountedSwiperContainers = document.querySelectorAll('.discounted-section');
-
-for (let [index, products] of discountedProducts.entries()) {
-    let swipe = new Swiper(discountedSwiperContainers[index].querySelector('.product-swiper'), {
+for (let [i, discountedContainer] of Object.entries(document.querySelectorAll('.discounted-section'))) {
+    let swipe = new Swiper(discountedContainer.querySelector('.product-swiper'), {
         // Optional parameters
         loop: true,
         spaceBetween: 1024,
@@ -104,21 +103,23 @@ for (let [index, products] of discountedProducts.entries()) {
             el: '.swiper-pagination',
         },
     });
+    products = await base.pullProducts(`/api/product/?discount__gte=0&limit=16&offset=${i * 16}`)
     fillProductsSwiper(products, swipe);
 }
 
-let flashlightProducts = await fetch(
-    '/api/products?supercategory_id=15&count=4&ordering=created_at',
-    { method: 'GET', }
-).then(
-    response => response.json()
-).then(
-    json => JSON.parse(json)
-)
-var list = document.querySelector('.flashlights');
-for (let product of flashlightProducts) {
-    let item = document.createElement('li');
-    item.classList.add('flashlight');
-    base.appendProductCard(item, product);
-    list.append(item);
+let flashlightProducts = await fetch(`/api/flashlight/?limit=16`).then(resp => resp.json()).then(data => data['results']);
+let flashlightSwiper = new Swiper('.product-section_flashlight .product-swiper', {
+    loop: true,
+        spaceBetween: 1024,
+
+        // If we need pagination
+        pagination: {
+            el: '.swiper-pagination',
+        },
+})
+fillProductsSwiper(flashlightProducts, flashlightSwiper);
+
+for (let swiper of document.querySelectorAll('.swiper')) {
+    swiper = swiper.swiper;
+    swiper.slideTo(1, 100);
 }

@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from . import serializers
-from store.models import Product
+from store.models import Product, Flashlight, Melee, Knife, Accompanying, Souvenir
 
 import json
 
@@ -51,3 +51,23 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = self.get_object()
         request.user.cart.toggle(product)
         return Response()
+
+
+class KnifeProductView(ProductViewSet):
+    queryset = Knife.objects.filter(sellable=True)
+
+
+class MeleeProductView(ProductViewSet):
+    queryset = Melee.objects.filter(sellable=True)
+
+
+class SouvenirProductView(ProductViewSet):
+    queryset = Souvenir.objects.filter(sellable=True)
+
+
+class FlashlightProductView(ProductViewSet):
+    queryset = Flashlight.objects.filter(sellable=True)
+
+
+class AccompanyingProductView(ProductViewSet):
+    queryset = Accompanying.objects.filter(sellable=True)

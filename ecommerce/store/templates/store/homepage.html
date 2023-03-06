@@ -308,14 +308,20 @@
                 </ul>
             </section>
             <!-- Section with flashlights -->
-            <section class="product-section section bg-white column">
+            <section class="product-section_flashlight product-section section bg-white column">
                 <header class="product-section__header row">
                     <h1>Flashlights</h1>
                     <a href="{% url 'store:products' %}?supercategory_id=15">More in catalogue</a>
                 </header>
-                <ul class="flashlights">
-                    <!-- Appended via JS -->
-                </ul>
+                <!-- swiper main container -->
+                <div class="swiper product-swiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                    </div>
+                    <!-- Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
             </section>
         </main> 
         {% include "store/footer.html" %}

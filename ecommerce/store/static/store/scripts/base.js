@@ -82,37 +82,49 @@ export const rate = async (rating, cardRating, cardSlug) => {
     }
 }
 export function appendProductCard(container, product) {
-    let template = document.querySelector('#product-card-template').content.cloneNode(true);
-    // Define card and it's parts
-    let card = template.querySelector('.product-card'),
-        cardId = template.querySelector('.product-card__id'),
-        cardImage = template.querySelector('.product-card__image img'),
-        cardTitle = template.querySelector('.product-card__row_title h2'),
-        cardSize = template.querySelector('.product-card__size h3'),
-        cardMaterials = template.querySelector('.product-card__materials h3'),
-        cardRating = template.querySelector('.product-card__rating'),
-        cardPersonalRating = template.querySelector('.product-card__personal-rating'),
-        cardRateCount = template.querySelector('.product-card__rate-count h3'),
-        cardPrice = template.querySelector('.product-card__price h3');
-    // Fill card's parts
-    cardId.setAttribute('value', product['rating']);
-    cardImage.parentElement.href = product['url'];
-    let imageSource = product['image_general'] ? product['image_general'] : 'https://www.discountcutlery.net/assets/images/NewProductImages/FOX620B.jpg';
-    cardImage.setAttribute('src', imageSource);
-    cardTitle.innerText = product["title"];
-    cardSize.innerText = product["size"];
-    cardMaterials.innerText = product["materials"];
-    product['personal_rating'] ? cardPersonalRating.value = product['personal_rating'] : null;
-    cardRateCount.innerText = product["votes_count"] + " votes";
-    cardPrice.innerText = product["price"] + "$";
+    var template = document.querySelector('#product-card-template').content.cloneNode(true),
+        card = template.querySelector('.product-card');
+    if (product) {
+            // Define card and it's parts
+            let cardId = template.querySelector('.product-card__id'),
+            cardImage = template.querySelector('.product-card__image img'),
+            cardTitle = template.querySelector('.product-card__row_title h2'),
+            cardSize = template.querySelector('.product-card__size h3'),
+            cardMaterials = template.querySelector('.product-card__materials h3'),
+            cardRating = template.querySelector('.product-card__rating'),
+            cardPersonalRating = template.querySelector('.product-card__personal-rating'),
+            cardRateCount = template.querySelector('.product-card__rate-count h3'),
+            cardPrice = template.querySelector('.product-card__price h3');
+        // Fill card's parts
+        cardId.setAttribute('value', product['id']);
+        cardImage.parentElement.href = product['url'];
+        let imageSource = product['image_general'] ? product['image_general'] : 'https://i.gifer.com/9IBr.gif';
+        cardImage.setAttribute('src', imageSource);
+        cardTitle.innerText = product["title"];
+        cardSize.innerText = product["size"];
+        cardMaterials.innerText = product["materials"];
+        product['personal_rating'] ? cardPersonalRating.value = product['personal_rating'] : null;
+        cardRateCount.innerText = product["votes_count"] + " votes";
+        cardPrice.innerText = product["price"] + "$";
 
-    let stars = cardRating.querySelectorAll('.rate');
-    for (let [ind, star] of Object.entries(stars)) {
-        star.addEventListener('click', async () => await rate(Number(ind) + 1, cardRating, cardId))
+        let stars = cardRating.querySelectorAll('.rate');
+        for (let [ind, star] of Object.entries(stars)) {
+            star.addEventListener('click', async () => await rate(Number(ind) + 1, cardRating, cardId))
+        }
+        cardPersonalRating.value != 0 ? setStars(product['personal_rating'], cardRating) : setStars(product['rating'], cardRating);
+
+        container.appendChild(card);
+    } else {
+        let cardStars = template.querySelector('.product-card__rating'),
+            cardComposition= template.querySelector('.product-card__row_composition'),
+            cardBuyButton = template.querySelector('.btn-orange'),
+            cardImage = template.querySelector('.product-card__image img');
+            cardStars.innerHTML = '';
+            cardBuyButton.innerHTML = '';
+            cardComposition.innerHTML = '';
+            cardImage.style.visibility = 'hidden';
+        container.appendChild(card);
     }
-    cardPersonalRating.value != 0 ? setStars(product['personal_rating'], cardRating) : setStars(product['rating'], cardRating);
-
-    container.appendChild(card);
 }
 export const signNewsletter = () => {
     const email = document.querySelector('#newsletter-email');
@@ -149,3 +161,4 @@ export const toggleNewsletter = (toggler) => {
 }
 export const pullProducts = async (urlQuery) => await fetch('/api/product/' + `?${urlQuery}`)
                                                     .then(response => response.json())
+                                                    .then(data => data.results)
