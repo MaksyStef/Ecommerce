@@ -25,10 +25,10 @@
                 </li>
                 <li class="page-footer__item column">
                     <h1 class="page-footer__item-title">Personal account</h1>
-                    <h2 class="page-footer__item-link"><a href="#">Personal account</a></h2>
+                    <h2 class="page-footer__item-link"><a href="{% url 'account:settings' %}">Personal account</a></h2>
                     <h2 class="page-footer__item-link"><a href="#">Order history</a></h2>
-                    <h2 class="page-footer__item-link"><a href="#">Favorite</a></h2>
-                    <h2 class="page-footer__item-link"><a href="#">Sign newsletter</a></h2>
+                    <h2 class="page-footer__item-link"><a href="{% url 'store:favourite' %}">Favorite</a></h2>
+                    <h2 class="page-footer__item-link"><a href="#newsletter-email">Sign newsletter</a></h2>
                 </li>
             </ul>
         </section>
@@ -69,7 +69,7 @@
                     <h2 class="page-footer__item-link"><a href="#newsletter-email">Sign up now!</a></h2>
                     <div class="page-footer__newsletter row">
                         <div class="newsletter-container row">
-                            <input type="email" class="newsletter-email" id="newsletter-email" title="Make sure your EMAIL is similar to example!" pattern="[A-Za-z0-9._+-]+@[A-Za-z0-9 -]+\.[a-z]{2,}" placeholder="example@gmail.com" />
+                            <input type="email" class="newsletter-email" id="newsletter-email" title="Make sure your EMAIL is similar to example!" pattern="[A-Za-z0-9._+-]+@[A-Za-z0-9 -]+\.[a-z]{2,}" placeholder="example@gmail.com" {% if request.user.is_authenticated %}value="{{request.user.email}}"{% endif %} />
                             <button class="newsletter-button newsletter-button_sign"><img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="arrow"></button>
                             <button class="newsletter-button newsletter-button_unsign toggled"><img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="arrow"></button>
                             <button class="newsletter-toggler pushable"><img src="{% static 'store/images/icons/reverse-icon.svg' %}" alt="toggle signing"></button>

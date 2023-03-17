@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 
 app_name = 'store'
@@ -9,5 +10,7 @@ urlpatterns = [
     path('products/', views.ProductsView.as_view(), name='products'),
     path('products/<slug:product_type>/', views.CertainProductsView.as_view(), name='certain'),
     path('product/<slug:slug>/', views.ProductView.as_view(), name='product'),
+    path('cart/', login_required(views.CartView.as_view()), name='cart'),
+    path('favourite/', login_required(views.FavouriteView.as_view()), name='favourite'),
     path('newsletters/', views.NewslettersView.as_view(), name='newsletter'),
 ]

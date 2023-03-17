@@ -45,71 +45,62 @@ class NewslettersView(View):
         return HttpResponse('success')
 
 
-class ProductsView(ListView, ContextMixin):
+class ProductsView(TemplateView):
     template_name = 'store/products.html'
-    context_object_name = 'products'
-    paginate_by = 24
+    model = Product
 
-    extra_context = {
-        'filter_cats': Category.objects.all(),
-        'max_price': Product.objects.all().order_by('-price')[0].price if Product.objects.all().count() > 0 else None,
-        'min_price': Product.objects.all().order_by('price')[0].price if Product.objects.all().count() > 0 else None,
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'filter_cats': Category.objects.all(),
+            'max_price': int(self.model.objects.all().order_by('-price')[0].price)+1 if self.model.objects.all().count() > 0 else None,
+            'min_price': int(self.model.objects.all().order_by('price')[0].price)    if self.model.objects.all().count() > 0 else None,
+            'api_url': f'/api/{self.model.__name__.lower()}/', # Set API url depending on self.model
+        })
+        return context
     
-    def get_queryset(self):
-        request = self.request
 
-        queryset = Product.objects.filter(sellable=True)
-
-        if request.GET.get('subcategory_id'):
-            queryset = queryset.filter(subcats__in=[get_object_or_404(Subcategory, id=int(request.GET.get('subcategory_id')))])
-
-        elif request.GET.get('category_id'):
-            queryset = queryset.filter(cats__in=[get_object_or_404(Category, id=int(request.GET.get('category_id')))])
-        
-        if request.GET.get('ordering'):
-            queryset = queryset.order_by(request.GET.get('ordering'))
-        
-        if request.GET.get('price_span'):
-            cheapest, expensiest = request.GET.get('price_span').split('_')
-            queryset = queryset.filter(price__lte=int(cheapest), price__gte=int(expensiest))
-        return queryset
-
-    def get(self, request, *args, **kwargs):
-        if request.GET.get('subcategory_id') or request.GET.get('category_id'):
-            try:
-                self.extra_context.update({
-                    'prods_cat': Subcategory.objects.get(id=int(request.GET.get('subcategory_id')))
-                })
-            except Subcategory.DoesNotExist:
-                pass
-            try:
-                self.extra_context.update({
-                    'prods_cat': Category.objects.get(id=int(request.GET.get('category_id')))
-                })
-            except Category.DoesNotExist:
-                pass
-        return super().get(request, *args, **kwargs)
-
-
-class CertainProductsView(ListView, ContextMixin):
-    template_name = 'store/products.html'
-    context_object_name = 'products'
-    paginate_by = 24
+class CertainProductsView(ProductsView):
 
     def get(self, request, product_type, *args, **kwargs):
-        subs = list(filter(lambda cls: slugify(cls.__name__) == product_type, Product.__subclasses__()))
+        subs = list(filter(lambda cls: slugify(cls.__name__) == product_type, Product.__subclasses__())) # See if product_type is in list of Product child subclasses
         self.model = subs[0] if len(subs) > 0 else None
-        if not self.model:
+        if not self.model: # Raise 404 if product_type not found
             raise HttpResponse(status=404)
         return super().get(request, *args, **kwargs)
 
 
 class ProductView(DetailView):
+    model = Product
     template_name = "store/product.html"    
 
 
 class SearchView(ListView):
     pass
+    
+
+class ProductContainerView(TemplateView, ContextMixin):
+    template_name = 'store/product_container.html'
+
+
+class CartView(ProductContainerView):
+
+    def get_context_data(self):
+        return {
+            'container_name' : 'cart',
+            'in_container' : self.request.user.get_cart_count(),
+            'products': self.request.user.cart.products.all(),
+        }
+
+
+class FavouriteView(ProductContainerView):
+
+    def get_context_data(self):
+        return {
+            'container_name' : 'favourite',
+            'in_container' : self.request.user.get_favourite_count(),
+            'products': self.request.user.favourite.products.all(),
+        }
+
 
 # Function Based Views

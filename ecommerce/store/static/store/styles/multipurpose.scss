@@ -68,6 +68,9 @@
 .none {
     display: none;
 }
+.swiper {
+    cursor: ew-resize;
+}
 
 // Elements
 .profile-icon {
@@ -109,7 +112,7 @@
     position: relative;
     color: inherit;
     &:hover {
-        color: var(--orange-color);
+        color: var(--orange-color) !important;
         &::after {
             width: 100%;
         }
@@ -352,7 +355,9 @@
             grid-template-columns: repeat(1, 1fr);
         }
     }
-
+    .swiper-wrapper {
+        padding: 0 0 rem(24) 0;
+    }
     .swiper-pagination-bullet {
         --swiper-pagination-bullet-width: 19px;
         --swiper-pagination-bullet-height: 2px;

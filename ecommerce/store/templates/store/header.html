@@ -1,4 +1,4 @@
-{% load static %}
+{% load static store_cats %}
 <header class="page-header column">
     <section class="page-header__floor_black page-header__floor row">
         <nav class="page-header__navigation row">
@@ -48,7 +48,6 @@
         <div class="page-header__white-right row">
             <ul class="page-header__actions row">
                 <li class="page-header__action_location page-header__action row">
-
                     <a target="_blank" href="https://goo.gl/maps/XaNopbtwZVugYkv99"><img class="location" src="{% static 'store/images/icons/location-icon.svg' %}" alt="location icon"></a>
                     <h1 class="city"><a target="_blank" href="https://goo.gl/maps/XaNopbtwZVugYkv99">Berlin</a></h1>
                 </li>
@@ -57,10 +56,10 @@
                     <p class="order-it"><a href="tel:+49152901820">Order by call</a></p>
                 </li>
                 <li class="page-header__action_buttons page-header__action row">
-                    <button class="pushable favourite-btn"></button>
-                    <button class="pushable cart-btn" purchase-count="0"></button>
+                    <a href="{% url 'store:favourite' %}" class="pushable favourite-btn"></a>
+                    <a href="{% url 'store:cart' %}" class="pushable cart-btn" purchase-count="{% if request.user.is_authenticated %}{{request.user.get_cart_count}}{% else %}0{% endif %}"></a>
                     <div class="column">
-                        <p class="summary"><span id="purchase-summary">8</span>$</p>
+                        <p class="summary"><span id="purchase-summary">{% if request.user.is_authenticated %}{{request.user.get_payment_price}}{% else %}0{% endif %}</span>$</p>
                         <a href="#" class="commiting">Commit purchase</a>
                     </div>
                 </li>
@@ -76,12 +75,13 @@
                         <h1>{{supercat.title}} <a href="{{supercat.get_absolute_url}}" class="none"><img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="look for"></a></h1>
                     </summary>
                     <ul class="page-header__categories row">
-                        {% for cat in supercat.get_cats %}
+                        {% for cat in supercat.get_type_cats %}
                         <li class="page-header__category column">
                             <h2 class="page-header__category-title"><a class="link" href="{{cat.get_absolute_url}}">{{cat.title}}</a></h2>
                             <hr class="page-header__category-line">
                             <ul class="page-header__subcategories column">
-                            {% for subcat in cat.get_subcats %}
+                            {% get_subcats cat as subcats %}
+                            {% for subcat in subcats %}
                                 <li class="page-header__subcategory">
                                     <h3><a class="link" href="{{subcat.get_absolute_url}}">{{subcat.title}}</a></h3>
                                 </li>

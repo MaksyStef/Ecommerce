@@ -26,13 +26,17 @@ class ProductViewSetTest(TestCase):
         p.rate(4, u)
         self.client = Client()
 
-    def testRate(self):
+    def testToggle(self):
         c = self.client
+        u = Account.objects.all()[0]
         c.login(username="testUser A", password="testPassword123")
         p = Product.objects.all()[0]
-        url = reverse('api:product-rate', None, [p.pk])
-        resp = c.put(url, json.dumps({'value': 4}), 'application/json')
+        url = reverse('api:product-toggle_cart', None, [p.pk])
+        resp = c.post(url, secure=False)
         self.assertEqual(resp.status_code, 200, f'Error code: {resp.status_code}')
+        self.assertTrue(u.cart.products.all().contains(p), f"Cart contains: {u.cart.products.all()}, must cantain Product A")
+        resp = c.post(url, secure=False)
+        self.assertFalse(u.cart.products.all().contains(p), f"Cart contains: {u.cart.products.all()}, must be empty")
 
     def testChildViewSet(self):
         c = self.client

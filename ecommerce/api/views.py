@@ -22,7 +22,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-    @action(methods=['post', 'put'], detail=True, permission_classes=[permissions.IsAuthenticated],
+    @action(methods=['put'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='rate', url_name='rate')
     def rate_product(self, request, *args, **kwargs):
         product = self.get_object()
@@ -30,26 +30,18 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.rate(int(val), request.user)
         return Response()
 
-    @action(methods=['post', 'put'], detail=True, permission_classes=[permissions.IsAuthenticated],
-            url_path='rate', url_name='rate')
-    def rate_product(self, request, *args, **kwargs):
-        product = self.get_object()
-        val = json.loads(request.body).get('value')
-        product.rate(int(val), request.user)
-        return Response()
-
-    @action(methods=['post', 'put'], detail=True, permission_classes=[permissions.IsAuthenticated],
-            url_path='toggle-fav', url_name='toggle_fav')
+    @action(methods=['post', 'put', 'delete'], detail=True, permission_classes=[permissions.IsAuthenticated],
+            url_path='toggle-favourite', url_name='toggle_favourite')
     def toggle_favourite(self, request, *args, **kwargs):
         product = self.get_object()
-        request.user.favourite.toggle(product)
+        result, product = request.user.favourite.toggle(product)
         return Response()
 
-    @action(methods=['post', 'put'], detail=True, permission_classes=[permissions.IsAuthenticated],
+    @action(methods=['post', 'put', 'delete'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='toggle-cart', url_name='toggle_cart')
-    def toggle_favourite(self, request, *args, **kwargs):
+    def toggle_cart(self, request, *args, **kwargs):
         product = self.get_object()
-        request.user.cart.toggle(product)
+        result, product = request.user.cart.toggle(product)
         return Response()
 
 

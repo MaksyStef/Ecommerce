@@ -56,19 +56,37 @@ export const setStars = (rating, cardRating) => {
             break;
     }
 }
-export const rate = async (rating, cardRating, cardSlug) => {
+export const rate = async (rating, cardRating, cardId) => {
     if (authenticated === true) {
-        await fetch(`/api/product/{${cardSlug.value}}/rate/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        let csrf = getCookie('csrftoken')
+        await fetch(`/api/product/${cardId.value}/rate/`, {
+            method: 'PUT',
+            headers: { 
+                "Content-Type": "application/json",
+                'Accept': 'application/json', 
+                'X-CSRFToken': csrf, 
             },
-            body:
-                JSON.stringify({
-                    value : rating,
-                }),
+            body: JSON.stringify({
+                "value": rating,
+            }),
         });
-        let personalRating = cardId.parentElement.querySelector('.product-card__personal-rating')
+        let personalRating = cardId.parentElement.querySelector('.product-card__personal-rating'),
+            rateCount = cardId.parentElement.querySelector('.product-card__rate-count');
         if (cardId.parentNode.contains(personalRating) === true) {
             personalRating.value = rating
         } else {
@@ -77,6 +95,7 @@ export const rate = async (rating, cardRating, cardSlug) => {
             personalRating.value = rating;
             personalRating.classList.add('product-card__personal-rating');
             cardId.parentNode.appendChild(personalRating);
+            rateCount.textContent = Number(rateCount.textContent) + 1;
         }
         setStars(rating, cardRating);
     }
@@ -94,25 +113,31 @@ export function appendProductCard(container, product) {
             cardRating = template.querySelector('.product-card__rating'),
             cardPersonalRating = template.querySelector('.product-card__personal-rating'),
             cardRateCount = template.querySelector('.product-card__rate-count h3'),
-            cardPrice = template.querySelector('.product-card__price h3');
+            cardPrice = template.querySelector('.product-card__price h3'),
+            cardPurchaseButton = template.querySelector('.btn-orange'),
+            favouriteToggler = template.querySelector('.product-card__row_composition .favourite-toggler');
         // Fill card's parts
         cardId.setAttribute('value', product['id']);
         cardImage.parentElement.href = product['url'];
         let imageSource = product['image_general'] ? product['image_general'] : 'https://i.gifer.com/9IBr.gif';
-        cardImage.setAttribute('src', imageSource);
+        cardImage.setAttribute('src', imageSource); 
         cardTitle.innerText = product["title"];
         cardSize.innerText = product["size"];
         cardMaterials.innerText = product["materials"];
         product['personal_rating'] ? cardPersonalRating.value = product['personal_rating'] : null;
         cardRateCount.innerText = product["votes_count"] + " votes";
-        cardPrice.innerText = product["price"] + "$";
+        cardPrice.innerHTML = `<span>${product["price"]}</span>$`;
 
         let stars = cardRating.querySelectorAll('.rate');
         for (let [ind, star] of Object.entries(stars)) {
             star.addEventListener('click', async () => await rate(Number(ind) + 1, cardRating, cardId))
         }
-        cardPersonalRating.value != 0 ? setStars(product['personal_rating'], cardRating) : setStars(product['rating'], cardRating);
-
+        product['personal_rating'] != 0 ? setStars(product['personal_rating'], cardRating) : setStars(product['rating'], cardRating);
+        if (product['in_cart']) {
+            cardPurchaseButton.innerHTML = `Remove from the cart <img src="/static/store/images/icons/cart-icon.svg" alt="cart-icon">`;
+            cardPurchaseButton.classList.toggle('toggled');
+        }
+        product['in_favourite'] ? favouriteToggler.classList.toggle('toggled') : null;
         container.appendChild(card);
     } else {
         let cardStars = template.querySelector('.product-card__rating'),

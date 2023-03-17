@@ -1,16 +1,72 @@
-import { appendProductCard } from "./base.js"
+import * as base from './base.js';
 
 
 // Fill product cards
-let products = JSON.parse(document.querySelector('#products').textContent);
-var container = document.querySelector('.products-list');
-for (let product of products) {
-    let item = document.createElement('li');
-    item.classList.add('products-item', 'row', 'flex-center');
-    appendProductCard(item, product);
-    container.append(item);
+const apiUrl = JSON.parse(document.querySelector("#ApiUrl")?.textContent); // Get API URL
+const limit = 24; // Number of items to display per page
+
+let currentPage = 1;
+let totalItemsCount = null;
+
+// Helper function to fetch data from the API and update the UI
+function updatePage() {
+  fetch(`${apiUrl}?limit=${limit}&offset=${(currentPage-1)*limit}`)
+    .then(res => res.json())
+    .then(data => {
+      totalItemsCount = data.count;
+      const products = data.results;
+      const productList = document.querySelector('.products-list');
+      productList.innerHTML = ''; // Clear out previous results
+      for (let product of products) {
+        // Create HTML element(s) to display each product, e.g.:
+        base.appendProductCard(productList, product)
+      }
+      updatePagination();
+    })
+    .catch(error => console.error(error));
 }
 
+// Helper function to update the pagination links at the bottom of the page
+function updatePagination() {
+  const totalPages = Math.ceil(totalItemsCount / limit);
+  const paginationContainer = document.querySelector('.products__pagination');
+  paginationContainer.innerHTML = ''; // Clear out previous pagination links
+  // Add "Previous" link if not on first page
+  if (currentPage > 1) {
+    const previousLink = document.createElement('a');
+    previousLink.innerText = '« Previous';
+    previousLink.href = '#';
+    previousLink.addEventListener('click', () => {
+      currentPage--;
+      updatePage();
+    });
+    paginationContainer.appendChild(previousLink);
+  }
+  // Add numbered page links
+  for (let i = 1; i <= totalPages; i++) {
+    const pageLink = document.createElement('a');
+    pageLink.innerText = i;
+    pageLink.href = '#';
+    pageLink.className = i === currentPage ? 'active' : '';
+    pageLink.addEventListener('click', () => {
+      currentPage = i;
+      updatePage();
+    });
+    paginationContainer.appendChild(pageLink);
+  }
+  // Add "Next" link if not on last page
+  if (currentPage < totalPages) {
+    const nextLink = document.createElement('a');
+    nextLink.innerText = 'Next »';
+    nextLink.href = '#';
+    nextLink.addEventListener('click', () => {
+      currentPage++;
+      updatePage();
+    });
+    paginationContainer.appendChild(nextLink);
+  }
+}
+updatePage(); // Initial call to fetch and display the first page of results
 
 // Create range filters
 const rangeInputs = document.querySelectorAll(".range-input"),

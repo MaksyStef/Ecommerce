@@ -42,12 +42,13 @@ class AbstractProductContainer(AbstractContainer):
     products = models.ManyToManyField('Product')
 
     def toggle(self, product):
-        if self.products.all().contains(product):
+        if self.products.filter(pk=product.pk).exists():
             self.products.remove(product)
-            return False
+            return "remove", None
         else:
             self.products.add(product)
-            return True
+            return "add", product
+
 
 class Favourite(AbstractProductContainer):
     """ Product container for saving products. """
@@ -113,8 +114,14 @@ class Subcategory(AbstractCategory):
 
 
 class Category(AbstractCategory):
-    is_filter = models.BooleanField(default=False)
-
+    # FILTER_TYPES = [
+    #     ('NULL', 'NOT FILTER'),
+    #     ('', ''),
+    # ]
+    # filter = models.CharField(
+    #     max_length  = 100,
+    #     choices     = 
+    # )
     def get_subcats(self, ordering:str, subcats: QuerySet) -> QuerySet:
         """ Return all subcats related to Category object if not given Subcategory QuerySet """
         if subcats:
@@ -238,6 +245,24 @@ class Product(PolymorphicModel):
         return self.votes.get(user_id=user.pk).value if user and self.votes.filter(user_id=user.pk).exists() else None
 
     @classmethod
+    def get_type_cats(model):
+        """
+        Returns a list of all categories included in ManyToManyField by all objects of Product model
+        """
+        products = model.objects.all()
+
+        # Create an empty set to store unique category objects
+        all_cats = set()
+
+        # Loop through each object of Product model
+        for product in products:
+            # Add all categories of each object to the set
+            all_cats |= set(product.cats.all())
+
+        # Return the final list of all unique category objects
+        return list(all_cats)
+
+    @classmethod
     def get_images(model):
         images = {}
         for field in [field for field in model._meta.fields if re.match('image_', field.name)]:
@@ -267,8 +292,9 @@ class ProductChildMixin:
     This method requires a slug field in your model.
 
     """
-    def get_absolute_url_to_type(self):
-        return f"{reverse('store:products')}/{self.__class__.__name__}"
+    @classmethod
+    def get_absolute_url_to_type(cls):
+        return f"{reverse('store:products')}/{cls.__name__}"
 
 
 class Knife(Product, ProductChildMixin):

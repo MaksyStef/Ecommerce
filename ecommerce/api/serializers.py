@@ -8,11 +8,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField()
     url = serializers.SerializerMethodField('get_url')
-    personal_rating = serializers.SerializerMethodField('personal_rating_func')
-    article = serializers.SerializerMethodField('format_article')
+    personal_rating = serializers.SerializerMethodField('_personal_rating_func')
+    article = serializers.SerializerMethodField('_format_article')
     votes_count = serializers.SerializerMethodField('_votes_count')
     size = serializers.SerializerMethodField('_get_size')
     materials = serializers.SerializerMethodField('_get_materials')
+    in_cart = serializers.SerializerMethodField('_in_cart')
+    in_favourite = serializers.SerializerMethodField('_in_favourite')
 
     class Meta:
         model = Product
@@ -32,22 +34,24 @@ class ProductSerializer(serializers.ModelSerializer):
             'votes_count',
             'size',
             'materials',
+            'in_cart',
+            'in_favourite',
         ]
 
-    def personal_rating_func(self, obj):
-        try:
-            return obj.get_personal_rating(user=self.context.get('request').user)
-        except:
-            return None
+    def get_url(self, obj):
+        return obj.get_absolute_url()
 
-    def format_article(self, obj):
+    def _format_article(self, obj):
         stringified_num = str(obj.article)
         while len(stringified_num) < 18:
             stringified_num = '0' + stringified_num        
         return stringified_num
 
-    def get_url(self, obj):
-        return obj.get_absolute_url()
+    def _personal_rating_func(self, obj):
+        try:
+            return obj.get_personal_rating(user=self.context.get('request').user)
+        except:
+            return None
 
     def _votes_count(self, obj):
         return obj.votes.all().count()
@@ -57,3 +61,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def _get_materials(self, obj):
         return obj.get_materials() if hasattr(obj, 'get_materials') else ''
+
+    def _in_cart(self, obj):
+        return self.context['request'].user.cart.products.filter(pk=obj.pk).exists() if self.context['request'].user.is_authenticated else False
+
+    def _in_favourite(self, obj):
+        return self.context['request'].user.favourite.products.filter(pk=obj.pk).exists() if self.context['request'].user.is_authenticated else False

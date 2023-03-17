@@ -38,6 +38,9 @@
 .none {
   display: none; }
 
+.swiper {
+  cursor: ew-resize; }
+
 .profile-icon_white {
   filter: brightness(5); }
 
@@ -75,7 +78,7 @@
   position: relative;
   color: inherit; }
   .link:hover {
-    color: var(--orange-color); }
+    color: var(--orange-color) !important; }
     .link:hover::after {
       width: 100%; }
   .link::after {
@@ -254,6 +257,8 @@
     @media (max-width: 767px) {
       .product-swiper .products-row {
         grid-template-columns: repeat(1, 1fr); } }
+  .product-swiper .swiper-wrapper {
+    padding: 0 0 1.5rem 0; }
   .product-swiper .swiper-pagination-bullet {
     --swiper-pagination-bullet-width: 19px;
     --swiper-pagination-bullet-height: 2px;

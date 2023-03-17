@@ -1,0 +1,111 @@
+{% extends "store/base.html" %}
+{% comment %} Template for ProductContainer View {% endcomment %}
+{% load static sass_tags %}
+{% block title %}{{container_name | title}}{% endblock title %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% sass_src 'store/styles/product_container.scss' %}">
+{% endblock extra_head %}
+{% block body %}
+<div class="wrapper column">
+    <!-- Header -->
+    <header class="subheader column">
+        <div class="row">
+            <h1 class="container-title">The {{container_name|title}}</h1>
+        </div>
+        <div class="row">
+            <div class="hierarchy-links row">
+                <a href="{% url 'store:homepage' %}">Homepage</a>
+                <a class="current" onclick="location.reload();" href="#">{{container_name | title}}</a>
+            </div>
+            <div class="in-container"><span>{{in_container}}</span> items in {{container_name}}</div>
+        </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- Product List -->
+    <section class="section_products">
+        <ul class="products column">
+            {% for product in products %}
+            <li class="product row">
+                <div class="column_left row flex-center">
+                    <div class="thumbnail row">
+                        <a href="{{product.get_absolute_url}}" target="_blank">
+                            <img src="{{product.image_general.url}}" alt="Product image" />
+                        </a>
+                    </div>
+                    <div class="detail column">
+                        <div class="name"><a href="{{product.get_absolute_url}}">{{ product.title }}</a></div>
+                        <div class="description">{{ product.description }}</div>
+                        <div class="price-container"><span class="price">{{ product.price }}</span>$</div>
+                        <input type="hidden" name="id" value="{{product.pk}}">
+                    </div>
+                </div>
+
+                <div class="column_right row flex-center">
+                    <div class="quantity">
+                        <input type="number" class="quantity" step="1" value="1"  min="1" max="{{product.in_stock}}"/>
+                    </div>
+                    <button class="remove" onclick="removeFromContainer(this)">
+                        <svg version="1.1" class="close"
+                            xmlns="//www.w3.org/2000/svg" xmlns:xlink="//www.w3.org/1999/xlink" x="0px"
+                            y="0px" viewBox="0 0 60 60" enable-background="new 0 0 60 60"
+                            xml:space="preserve">
+                            <polygon
+                                points="38.936,23.561 36.814,21.439 30.562,27.691 24.311,21.439 22.189,23.561 28.441,29.812 22.189,36.064 24.311,38.186 30.562,31.934 36.814,38.186 38.936,36.064 32.684,29.812">
+                            </polygon>
+                        </svg>
+                    </button>
+                </div>
+            </li>
+            {% empty %}
+            <h1 class="products__empty">There is no any products yet, <a class="link" href="{% url 'store:products' %}">include some in</a><br><a class="link" href="{% url 'store:homepage' %}">Go Home</a></h1>
+            {% endfor %}
+        </ul>
+    </section>
+    <!-- End Product List -->
+    <section>
+        <hr class="page-divider">
+    </section>
+    {% if container_name == 'cart' %}
+    <!-- Summary -->
+    <section class="section_summary row">
+        <div class="promotion column">
+            <label for="promo-code">Have A Promo Code?</label>
+            <div class="row">
+                <input placeholder="XXXX-XXXX-XXXX-XXXX" type="text" id="promo-code"/>
+                <button type="button"></button>
+            </div>
+        </div>
+
+        <div class="summary column">
+            <div class="total row">
+                <h1>Total:</h1>
+                <p><span>{{request.user.get_payment_price}}</span>$</p>
+            </div>
+            <div class="checkout">
+                <button type="button">Commit Purchase</button>
+            </div>
+        </div>
+    </section>
+    <!-- End Summary -->
+    {% endif %}
+</div>
+<script>
+    const removeFromContainer = btn => {
+        " use non-strict "
+        let csrf = new DOMParser().parseFromString(`{% csrf_token %}`, 'text/html').querySelector('input').value;
+        let id = btn.parentElement.parentElement.querySelector('input[name="id"]').value;
+        const response = fetch(`/api/product/${id}/toggle-cart/`, { 
+            method: "POST", 
+            headers: { 'X-CSRFToken':  csrf, "Content-Type" : "application/json" },
+            body: JSON.stringify({ 'action' : 'remove'}),
+        })
+        console.table(response);
+        let span = document.querySelector('.in-container span');
+        span.textContent = Number(span.textContent) - 1;
+        span = document.querySelector('.total span'),
+        span.textContent = (Number(span.textContent) - Number(btn.parentElement.parentElement.querySelector('.price').textContent)).toFixed(2);
+        btn.parentElement.parentElement.remove();
+    }
+</script>
+{% endblock body %}
