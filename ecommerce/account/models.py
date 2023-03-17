@@ -33,3 +33,13 @@ class Account(AbstractBaseUser, PermissionsMixin): # Sometimes need to remove Pe
     bonus_points = models.PositiveIntegerField(default=0, editable=False, blank=True)
 
     objects = AccountManager()
+
+
+    def get_cart_count(self):
+        return self.cart.products.all().count()
+
+    def get_favourite_count(self):
+        return self.favourite.products.all().count()
+
+    def get_payment_price(self):
+        return sum(self.cart.products.all().values_list('price', flat=True))

@@ -1,0 +1,63 @@
+{% extends "account/base.html" %}
+{% load static sass_tags %}
+{% block title %}Welcome!{% endblock title %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% sass_src 'account/styles/sign.scss' %}">
+{% endblock extra_head %}
+{% block body %}
+    <div class="wrapper column">
+        <main class="content column flex-center">
+            <div class="page_1 page column">
+                <form class="sign-form column flex-center" method="post">
+                    <input type="hidden" name="action" value="login">
+                    {% csrf_token %}
+                    <label class="column">
+                        <h1>Username</h1>
+                        <input required placeholder="Username" type="text" name="username" id="usernameLogin" />
+                    </label>
+                    <label class="column">
+                        <h1>Password</h1>
+                        <input required placeholder="Password" type="password" name="password" id="passwordLogin">
+                    </label>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
+            <div class="page_2 page column flex-center" style="translate: 120vw -50% 0;">
+                <form class="sign-form column" method="post">
+                    <input type="hidden" name="action" value="register">
+                    {% csrf_token %}
+                    <label class="column">
+                        <h1>Username</h1>
+                        <input tabindex="-1" required placeholder="Username" type="text" name="username" id="usernameRegister" />
+                    </label>
+                    <label class="column">
+                        <h1>Email</h1>
+                        <input tabindex="-1" required type="email" name="email" pattern="[A-Za-z0-9._+-]+@[A-Za-z0-9 -]+\.[a-z]{2,}" placeholder="example@gmail.com" id="email" />
+                    </label>
+                    <label class="column">
+                        <h1>Password</h1>
+                        <input autocomplete="noautocomplete" tabindex="-1" required placeholder="Password" type="password" name="password" id="passwordRegister">
+                    </label>
+                    <label class="column">
+                        <h1>Confirm Password</h1>
+                        <input autocomplete="noautocomplete" tabindex="-1" required placeholder="Password" type="password" name="confirmation">
+                    </label>
+                    <input type="submit" tabindex="-1" value="Register">
+                </form>
+            </div>
+            <div class="float">
+                <label class="label_log" for="toLogin"></label>
+                <label class="label_reg" for="toRegister"></label>
+                <button class="row flex-center" id="toLogin" type="button">
+                    <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="arrow-left">
+                    <span>Login</span>
+                </button>
+                <button class="row flex-center" id="toRegister" type="button">
+                    <span>Register</span>
+                    <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="arrow-right">
+                </button>
+            </div>
+        </main>
+    </div>
+    <script src="{% static 'account/scripts/sign.js' %}"></script>
+{% endblock body %}

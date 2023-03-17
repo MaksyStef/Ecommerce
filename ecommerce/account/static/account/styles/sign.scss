@@ -1,0 +1,99 @@
+// ================= Import main =================
+@import 'main.scss';
+
+// ================= Styles =================
+.page {
+    z-index: 1;
+    transition: 0.4s;
+    transition-timing-function: ease-out;
+}
+.sign-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50% 0;
+    z-index: 1;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: rem(420);
+    width: clamp(310px);
+    border: 2px solid var(--orange-color);
+    @include adaptiv-value(padding-bottom, 5, 84, 3);
+    @include adaptiv-value(padding-top, 5, 84, 3);
+    @include adaptiv-value(padding-right, 5, 84, 3);
+    @include adaptiv-value(padding-left, 5, 84, 3);
+    gap: rem(28);
+
+    label {
+        gap: 4px;
+    }
+    input[type="text"], input[type="password"], input[type="email"] {
+        display: inline-block;
+        min-width: 280px;
+        padding: rem(8);
+        border: 1px solid var(--orange-color);
+    }
+    input[type="submit"] {
+        border-radius: 16px;
+        background-color: transparent;
+        border: 1px solid var(--orange-color);
+        @include adaptiv-value(width, 80, 280, 3);
+        padding: rem(8);
+        cursor: pointer;
+        margin-top: auto;
+
+        &:focus, &:active, &:hover {
+            background-color: var(--orange-color);
+            color: #fff;
+        }
+    }
+}
+.float {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+.label_log, .label_reg {
+    top: 0;
+    position: absolute;
+    width: 5.5vw;
+    height: 100%;
+    cursor: pointer;
+    overflow: hidden;
+    transition: opacity 0.35s;
+    opacity: 0.25;
+    &:hover {
+        opacity: 1;
+    }
+}
+.label_log {
+    left: 0;
+    background-image: linear-gradient(90deg, rgba(#000, 0.4), rgba(#000, 0.01));
+}
+.label_reg {
+    right: 0;
+    background-image: linear-gradient(90deg, rgba(#000, 0.01), rgba(#000, 0.4));
+}
+#toLogin, #toRegister {
+    text-transform: uppercase;
+    font-weight: 600;
+    position: absolute;
+    background-color: transparent;
+    top: 50%;
+    --start-posX: 0px;
+    --start-posY: -50%;
+    animation: shakeX 1s linear infinite;
+    gap: rem(4);
+}
+#toLogin {
+    left: calc(5.5vw + 16px);
+    img {
+        transform: rotate(180deg);
+    }
+    
+}
+#toRegister {
+    right: calc(5.5vw + 16px);
+}
