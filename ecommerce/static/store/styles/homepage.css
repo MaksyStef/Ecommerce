@@ -545,15 +545,6 @@
       @media (max-width: 1760px) {
         .page-header__supercategory-details[open] > .page-header__subcategories {
           padding-right: calc( 20px + 108 * ((100vw - 320px) / 1440)); } }
-    .page-header__supercategory-details[open] > summary > h1 > a {
-      scale: 1.25;
-      opacity: 1;
-      display: inline-block;
-      position: absolute;
-      top: 0;
-      right: -1rem; }
-      .page-header__supercategory-details[open] > summary > h1 > a > img {
-        filter: brightness(0) invert(1); }
   .page-header__supercategory-details > summary {
     position: relative;
     margin-bottom: 20px;

@@ -241,17 +241,6 @@
                 animation: appear 0.35s linear forwards;
                 z-index: 2;
             }
-            & > summary > h1 > a {
-                scale: 1.25;
-                opacity: 1;
-                display: inline-block;
-                position: absolute;
-                top: 0;
-                right: rem(-16);
-                & > img {
-                    filter: brightness(0) invert(1);
-                }
-            }
         }
         & > summary {
             position: relative;
@@ -259,6 +248,9 @@
             width: fit-content;
             list-style: none;
         }
+    }
+    &__supercategory-more {
+        color: var(--orange-color);
     }
     &__categories {
         --initial-opacity: 0.3;

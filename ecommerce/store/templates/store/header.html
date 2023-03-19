@@ -72,7 +72,7 @@
             <li class="page-header__supercategory">
                 <details class="page-header__supercategory-details">
                     <summary class="link">
-                        <h1>{{key}} <a href="{{supercat.get_absolute_url_to_type}}" class="none"><img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="look for"></a></h1>
+                        <h1>{{key}}</h1>
                     </summary>
                     <ul class="page-header__categories row">
                         {% for cat in supercat.get_type_cats %}
@@ -88,6 +88,7 @@
                             {% endfor %}
                             </ul>
                             <hr class="page-header__category-line">
+                            <h3><a class="link page-header__supercategory-more" href="{{supercat.get_absolute_url_to_type}}">See more</a></h3>
                         </li>
                         {% endfor %}
                     </ul>
