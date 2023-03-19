@@ -513,7 +513,8 @@
     flex: 1 1 auto;
     z-index: 11; }
     .page-header__supercategories:has([open]) .page-header__supercategory-details:not(:is([open])) {
-      pointer-events: none; }
+      pointer-events: none;
+      opacity: 0.2; }
   .page-header__supercategory {
     max-width: 100%;
     flex: 1 0 auto;

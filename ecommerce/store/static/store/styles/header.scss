@@ -207,6 +207,7 @@
 
         &:has([open]) .page-header__supercategory-details:not(:is([open])) {
             pointer-events: none;
+            opacity: 0.2;
         }
     }
     &__supercategory {

@@ -48,20 +48,14 @@ class ProductTestCase(TestCase):
         self.assertEqual(
             fav.products.all().get(),
             user.favourite.products.all().get(),
-            f"""
-Favourite products: {fav.products.all()}
-User fav products: {user.favourite.products.all()}
-            """
+            f"""Favourite products: {fav.products.all()} \nUser fav products: {user.favourite.products.all()}"""
         )
         fav.products.remove(product)
         user.favourite.toggle(product)
         self.assertEqual(
             fav.products.all().exists(),
             user.favourite.products.all().exists(),
-            f"""
-Favourite products: {fav.products.all()}
-User fav products:  {user.favourite.products.all()}
-            """
+            f"""Favourite products: {fav.products.all()} \nUser fav products:  {user.favourite.products.all()}"""
         )
 
     def test_toggle_cart(self):
@@ -75,20 +69,14 @@ User fav products:  {user.favourite.products.all()}
         self.assertEqual(
             cart.products.all().get(),
             user.cart.products.all().get(),
-            f"""
-Cart products:      {cart.products.all()}
-User cart products: {user.cart.products.all()}
-            """
+            f"""Cart products: {cart.products.all()} \nUser cart products: {user.cart.products.all()}"""
         )
         cart.products.remove(product)
         user.cart.toggle(product)
         self.assertEqual(
             cart.products.all().exists(),
             user.cart.products.all().exists(),
-            f"""
-Cart products:      {cart.products.all()}
-User cart products: {user.cart.products.all()}
-            """
+            f"""Cart products: {cart.products.all()} \nUser cart products: {user.cart.products.all()}"""
         )
 
     def test_rating(self):
@@ -100,18 +88,12 @@ User cart products: {user.cart.products.all()}
         self.assertEqual(
             product.get_rating(),
             rating,
-            f"""
-Rating:         {rating}
-Product rating: {product.get_rating()}
-            """
+            f"""Rating: {rating} \nProduct rating: {product.get_rating()}"""
         )
         self.assertEqual(
             product.get_personal_rating(user),
             rating,
-            f"""
-Rating:          {rating}
-Personal rating: {product.get_personal_rating(user)}
-            """
+            f"""Rating: {rating} \nPersonal rating: {product.get_personal_rating(user)}"""
         )
 
     def test_cats_autofill(self):
@@ -121,19 +103,13 @@ Personal rating: {product.get_personal_rating(user)}
         product.save()
         self.assertTrue(
             product.cats.filter(id=Category.objects.all().get().pk).exists(),
-            f"""
-Product cats:    {product.cats.all()}
-Product subcats: {product.subcats.all()}
-            """
+            f"""Product cats: {product.cats.all()} \nProduct subcats: {product.subcats.all()}"""
         )
         product.subcats.remove(Subcategory.objects.all().get())
         product.save()
         self.assertTrue(
             not product.cats.filter(id=Category.objects.all().get().pk).exists(),
-            f"""
-Product cats:    {product.cats.all()}
-Product subcats: {product.subcats.all()}
-            """
+            f"""Product cats: {product.cats.all()} \nProduct subcats: {product.subcats.all()}"""
         )
     
     def test_products_polymorphism(self):
@@ -171,8 +147,39 @@ Product subcats: {product.subcats.all()}
         self.assertEqual(
             {'image_general': None, 'image_edge': None, 'image_case': None, 'image_handle': None, 'image_guard_and_back': None},
             knife.get_images(),
-            f"""
-Knife urls: {knife.get_images()}
-Expected  : /store/images/products/general/
-             """
+            f"""Knife urls: {knife.get_images()} \nExpected: /store/images/products/general/"""
         )
+    
+    def test_children_url_to_type(self):
+        self.assertEqual(
+            Knife.get_absolute_url_to_type(),
+            '/products/knife/',
+            Knife.get_absolute_url_to_type(),
+        )
+
+    def test_get_cats(self):
+        c = Category.objects.all().get()
+        s = Subcategory.objects.all().get()
+        p = Product.objects.all().get()
+        p.subcats.add(s)
+        p.save()
+        res = p.get_type_cats()
+        self.assertIn(c, res, f"Expected list of Categories, got: {res}")
+
+class CategoryTestCase(TestCase):
+
+    def setUp(self):
+        cat = Category.objects.create(title='Cat1')
+        for n in range(1, 11):
+            Subcategory(
+                title=f"Subcat{n} of {cat.title}",
+                cat = cat,
+            )
+        self.cat = cat
+    
+    def testCreate(self):
+        prev = ...
+        for i, subcat in enumerate(Subcategory.objects.all()):
+            if i > 0:
+                self.assertGreater(subcat.created_at.datetime(), prev.created_at.datetime(), f"Must be Subcat > Prev, but {subcat.created_at} not greater than {prev.created_at}")
+            prev = subcat

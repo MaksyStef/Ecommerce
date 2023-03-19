@@ -114,15 +114,16 @@ class Subcategory(AbstractCategory):
 
 
 class Category(AbstractCategory):
-    # FILTER_TYPES = [
-    #     ('NULL', 'NOT FILTER'),
-    #     ('', ''),
-    # ]
-    # filter = models.CharField(
+    FILTER_TYPES = [
+        ('NOT', 'NOT FILTER'),
+        ('CBX', 'CHECKBOX FILTER'),
+        ('RAN', 'RANGE FILTER'),
+    ]
+    # is_filter = models.CharField(
     #     max_length  = 100,
-    #     choices     = 
+    #     choices     = FILTER_TYPES,
     # )
-    def get_subcats(self, ordering:str, subcats: QuerySet) -> QuerySet:
+    def get_subcats(self, ordering:str="created_at", subcats:QuerySet=None) -> QuerySet:
         """ Return all subcats related to Category object if not given Subcategory QuerySet """
         if subcats:
             return subcats.objects.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
@@ -245,9 +246,13 @@ class Product(PolymorphicModel):
         return self.votes.get(user_id=user.pk).value if user and self.votes.filter(user_id=user.pk).exists() else None
 
     @classmethod
-    def get_type_cats(model):
+    def get_type_cats(model, ordering:str="created_at", **filters):
         """
         Returns a list of all categories included in ManyToManyField by all objects of Product model
+        
+        Parameters:
+        ordering: string; set ordering of queryset
+        **filters: set filters for returned categories
         """
         products = model.objects.all()
 
@@ -257,7 +262,7 @@ class Product(PolymorphicModel):
         # Loop through each object of Product model
         for product in products:
             # Add all categories of each object to the set
-            all_cats |= set(product.cats.all())
+            all_cats |= set(product.cats.all() if not filters else product.cats.filter(**filters))
 
         # Return the final list of all unique category objects
         return list(all_cats)
@@ -293,8 +298,8 @@ class ProductChildMixin:
 
     """
     @classmethod
-    def get_absolute_url_to_type(cls):
-        return f"{reverse('store:products')}/{cls.__name__}"
+    def get_absolute_url_to_type(model):
+        return f"{reverse('store:products')}{slugify(model.__name__)}/" # returns url like: /products/class-slug/
 
 
 class Knife(Product, ProductChildMixin):

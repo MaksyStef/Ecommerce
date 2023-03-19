@@ -1,4 +1,4 @@
-{% load static store_cats %}
+{% load static store_tags %}
 <header class="page-header column">
     <section class="page-header__floor_black page-header__floor row">
         <nav class="page-header__navigation row">
@@ -68,11 +68,11 @@
     </section>
     <section class="page-header__floor_cats page-header__floor_black page-header__floor row">
         <ul class="page-header__supercategories row">
-            {% for supercat in supercategories %}
+            {% for key, supercat in supercategories.items %}
             <li class="page-header__supercategory">
                 <details class="page-header__supercategory-details">
                     <summary class="link">
-                        <h1>{{supercat.title}} <a href="{{supercat.get_absolute_url}}" class="none"><img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="look for"></a></h1>
+                        <h1>{{key}} <a href="{{supercat.get_absolute_url_to_type}}" class="none"><img src="{% static 'store/images/icons/dandruff-icon.svg' %}" alt="look for"></a></h1>
                     </summary>
                     <ul class="page-header__categories row">
                         {% for cat in supercat.get_type_cats %}
