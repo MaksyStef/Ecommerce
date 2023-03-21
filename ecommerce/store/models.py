@@ -221,6 +221,7 @@ class Product(PolymorphicModel):
                 self.cats.add(cat)
         self.bonus_points = (self.price - (self.discount/100 * self.price)) / 5
         self.slug = slugify(self.title)
+        self.rating = self.get_rating()
         super().save(*args, **kwargs)
 
     def rate(self, rating: int, user: User):
@@ -235,6 +236,7 @@ class Product(PolymorphicModel):
             vote.value = rating
 
         vote.save()
+        self.save()
         return vote.value
 
     def get_rating(self):
