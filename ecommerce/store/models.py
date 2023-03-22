@@ -215,13 +215,14 @@ class Product(PolymorphicModel):
             for cat in self.cats.all():
                 if cat not in cats:
                     self.cats.remove(cat)
+            # Set rating
+            self.rating = self.get_rating()
             super().save(*args, **kwargs)
             # Add categories in cats
             for cat in cats.all():
                 self.cats.add(cat)
         self.bonus_points = (self.price - (self.discount/100 * self.price)) / 5
         self.slug = slugify(self.title)
-        self.rating = self.get_rating()
         super().save(*args, **kwargs)
 
     def rate(self, rating: int, user: User):
