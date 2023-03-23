@@ -111,6 +111,12 @@ class Subcategory(AbstractCategory):
     def get_absolute_url(self, class_name:str):
         """ Returns subcategory url of certain Product subclass """
         return f'{reverse("store:products")}/{class_name}/{self.slug}'
+    
+    def get_products(self, model='Product', queryset=None):
+        model = globals().get(model)
+        if not queryset:
+            queryset = model.objects.all()
+        return queryset.filter(subcats__in=[self.id])
 
 
 class Category(AbstractCategory):
@@ -128,6 +134,12 @@ class Category(AbstractCategory):
         if subcats:
             return subcats.objects.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
         return Subcategory.objects.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
+
+    def get_products(self, model='Product', queryset=None): # we'll define Product model later, so we use globals() to "predefine" it
+        model = globals().get(model)
+        if not queryset:
+            queryset = model.objects.all()
+        return queryset.filter(cats__in=[self.id])
 
 
 class Product(PolymorphicModel):
