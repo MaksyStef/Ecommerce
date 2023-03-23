@@ -1,3 +1,4 @@
+from django.db.models import PositiveIntegerField
 from django.shortcuts import (
     render,
     redirect,
@@ -28,6 +29,7 @@ from store.models import (
 from api.serializers import ProductSerializer
 import json
 
+
 # Mixins
 
 
@@ -52,10 +54,11 @@ class ProductsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
+            'prods_cat': self.model.__name__,
             'filter_cats': Category.objects.all(),
             'max_price': int(self.model.objects.all().order_by('-price')[0].price)+1 if self.model.objects.all().count() > 0 else None,
             'min_price': int(self.model.objects.all().order_by('price')[0].price)    if self.model.objects.all().count() > 0 else None,
-            'api_url': f'/api/{self.model.__name__.lower()}/', # Set API url depending on self.model
+            'api_url': f'/api/{slugify(self.model.__name__)}/', # Set API url depending on self.model
         })
         return context
     
@@ -68,6 +71,32 @@ class CertainProductsView(ProductsView):
         if not self.model: # Raise 404 if product_type not found
             raise HttpResponse(status=404)
         return super().get(request, *args, **kwargs)
+    
+    def get_range_filters(self):
+        model_fields = self.model._meta.fields
+        field_dicts = []
+        forbidden_field_names = ['rating', 'in_stock', 'sold', 'bonus_points']
+        for field in model_fields:
+            if isinstance(field, PositiveIntegerField) and field.name not in forbidden_field_names:
+                max_value = getattr(self.model.objects.all().order_by('-'+field.name)[0], field.name)
+                min_value = getattr(self.model.objects.all().order_by(field.name)[0], field.name)
+                field_dict = {
+                    'title': field.name.replace('_', ' '),
+                    'max': max_value,
+                    'min': min_value
+                }
+                field_dicts.append(field_dict)
+        return field_dicts
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'supercategory': self.model,
+            'supercategory_title': self.model.__name__,
+            'filter_cats': self.model.get_type_cats(),
+            'range_filters': self.get_range_filters(),
+        })
+        return context
 
 
 class ProductView(DetailView):

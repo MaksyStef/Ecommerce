@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.http import HttpRequest
 from django.urls import reverse
 from django.contrib.auth import authenticate
 from . import serializers
@@ -60,3 +61,41 @@ class ProductViewSetTest(TestCase):
         resp_f = c.get('/api/flashlight/').json()['results']
         resp_p = c.get('/api/product/').json()['results']
         self.assertTrue(resp_f != resp_p)
+
+    def testQueryRequests(self):
+        for num in range(5):
+            Category.objects.create(title=f"Cat{num}")
+            Product.objects.create(
+                price=11.5+num,
+                discount=10 if num % 3 == 0 else 0,
+                sold=num,
+                title=f"Cat{num}",
+                description=f"Product number {num}",
+                article=num**num,
+                in_stock=10*num,
+            )
+        for cat in Category.objects.all():
+            for num in range(5):
+                s = Subcategory.objects.create(
+                    title=f"Subcar{num} {cat.title}",
+                    cat=cat,
+                )
+        
+        for index, product in enumerate(Product.objects.all()):
+            if index % 2:
+                product.subcats.add(Subcategory.objects.all()[index])
+
+        c = self.client
+
+        resp = c.get('/api/product/?price_gap=14_20')
+        dummy_request = HttpRequest()
+        dummy_request.method = 'GET'
+        dummy_request.path = '/'
+        dummy_request.META['SERVER_NAME'] = 'localhost'
+        dummy_request.META['SERVER_PORT'] = '8000'
+        dummy_request.META['HTTP_AUTHORIZATION'] = 'Bearer your_token_here'
+        dummy_request.META['HTTP_ACCEPT'] = 'application/json'
+        dummy_request.META['CONTENT_TYPE'] = 'application/json'
+        dummy_request.user = Account.objects.all().get()
+        expected = serializers.ProductSerializer(Product.objects.filter(price__gte=14, price__lte=20), many=True, context={'request': dummy_request}).data
+        self.assertEqual(expected, resp.json()['results'], f"\n\nExpected: {expected}\nResponse: {resp}")

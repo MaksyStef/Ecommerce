@@ -169,9 +169,18 @@ class ProductTestCase(TestCase):
 class CategoryTestCase(TestCase):
 
     def setUp(self):
+        Product.objects.create(
+            title       = 'Product 1',
+            price       = 100,
+            discount    = 10,
+            sellable    = True,
+            description = 'Test product description',
+            article     = '0000128411111111',
+            in_stock    = 10,
+        )
         cat = Category.objects.create(title='Cat1')
         for n in range(1, 11):
-            Subcategory(
+            Subcategory.objects.create(
                 title=f"Subcat{n} of {cat.title}",
                 cat = cat,
             )
@@ -183,3 +192,10 @@ class CategoryTestCase(TestCase):
             if i > 0:
                 self.assertGreater(subcat.created_at.datetime(), prev.created_at.datetime(), f"Must be Subcat > Prev, but {subcat.created_at} not greater than {prev.created_at}")
             prev = subcat
+        
+    def testGetProducts(self):
+        p = Product.objects.first()
+        s = Subcategory.objects.first()
+        p.subcats.add(s)
+        p.save()
+        self.assertEqual(s.get_products().count(), 1, f"Subcat: {s}")

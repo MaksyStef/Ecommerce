@@ -553,6 +553,8 @@
     @media (max-width: 1760px) {
       .page-header__supercategory-details > summary {
         margin-bottom: calc( 16px + 4 * ((100vw - 320px) / 1440)); } }
+  .page-header__supercategory-more {
+    color: var(--orange-color); }
   .page-header__categories {
     --initial-opacity: 0.3;
     --final-opacity: 1;

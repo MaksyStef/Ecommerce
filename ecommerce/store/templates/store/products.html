@@ -66,7 +66,7 @@
                                 {% for subcat in cat.get_subcats %}
                                 <li class="filter-item">
                                     <label class="checkbox row">
-                                        <input type="checkbox">
+                                        <input type="checkbox" checked>
                                         <p class="title">{{subcat.title}}</p>
                                         <p class="count">({{subcat.get_products.count}})</p]>
                                     </label>
@@ -75,78 +75,83 @@
                             </ul>
                         </details>
                     {% endfor %}
+                    {% for f in range_filters %}
                     <details class="filter_range-filter filter">
-                        <summary>Overall length</summary>
+                        <summary>{{f.title|title}}</summary>
                         <ul class="filter-list">
                             <li class="filter-item">
                                 <div class="number-input">
                                     <div class="field">
-                                        <input type="number" class="input-min" value="0">
+                                        <input type="number" class="input-min" value="{{f.min}}">
                                     </div>
                                     <div class="field">
-                                        <input type="number" class="input-max" value="100">
+                                        <input type="number" class="input-max" value="{{f.max}}">
                                     </div>
                                 </div>
                                 <div class="slider">
                                     <div class="progress"></div>
                                 </div>
                                 <div class="range-input">
-                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
-                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                    <input type="range" class="range-min" min="{{f.min}}" max="{{f.max}}" value="{{f.min}}" step="1">
+                                    <input type="range" class="range-max" min="{{f.min}}" max="{{f.max}}" value="{{f.max}}" step="1">
                                 </div>
                             </li>
                         </ul>
+                        <input type="hidden" name="filter-query" value="{{f.query}}">
                     </details>
-                    <details class="filter_range-filter filter">
-                        <summary>Edge length</summary>
-                        <ul class="filter-list">
-                            <li class="filter-item">
-                                <div class="number-input">
-                                    <div class="field">
-                                        <input type="number" class="input-min" value="0">
-                                    </div>
-                                    <div class="field">
-                                        <input type="number" class="input-max" value="100">
-                                    </div>
-                                </div>
-                                <div class="slider">
-                                    <div class="progress"></div>
-                                </div>
-                                <div class="range-input">
-                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
-                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
-                                </div>
-                            </li>
-                        </ul>
-                    </details>
-                    <details class="filter_range-filter filter">
-                        <summary>Edge width</summary>
-                        <ul class="filter-list">
-                            <li class="filter-item">
-                                <div class="number-input">
-                                    <div class="field">
-                                        <input type="number" class="input-min" value="0">
-                                    </div>
-                                    <div class="field">
-                                        <input type="number" class="input-max" value="100">
-                                    </div>
-                                </div>
-                                <div class="slider">
-                                    <div class="progress"></div>
-                                </div>
-                                <div class="range-input">
-                                    <input type="range" class="range-min" min="0" max="100" value="0" step="1">
-                                    <input type="range" class="range-max" min="0" max="100" value="100" step="1">
-                                </div>
-                            </li>
-                        </ul>
-                    </details>
+                    {% endfor %}
+                  {% comment %}
+                      <details class="filter_range-filter filter">
+                          <summary>Edge length</summary>
+                          <ul class="filter-list">
+                              <li class="filter-item">
+                                  <div class="number-input">
+                                      <div class="field">
+                                          <input type="number" class="input-min" value="0">
+                                      </div>
+                                      <div class="field">
+                                          <input type="number" class="input-max" value="100">
+                                      </div>
+                                  </div>
+                                  <div class="slider">
+                                      <div class="progress"></div>
+                                  </div>
+                                  <div class="range-input">
+                                      <input type="range" class="range-min" min="0" max="100" value="0" step="1">
+                                      <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                  </div>
+                              </li>
+                          </ul>
+                      </details>
+                      <details class="filter_range-filter filter">
+                          <summary>Edge width</summary>
+                          <ul class="filter-list">
+                              <li class="filter-item">
+                                  <div class="number-input">
+                                      <div class="field">
+                                          <input type="number" class="input-min" value="0">
+                                      </div>
+                                      <div class="field">
+                                          <input type="number" class="input-max" value="100">
+                                      </div>
+                                  </div>
+                                  <div class="slider">
+                                      <div class="progress"></div>
+                                  </div>
+                                  <div class="range-input">
+                                      <input type="range" class="range-min" min="0" max="100" value="0" step="1">
+                                      <input type="range" class="range-max" min="0" max="100" value="100" step="1">
+                                  </div>
+                              </li>
+                          </ul>
+                      </details>
+                  {% endcomment %}
                     <details class="filter_rating filter_checkbox filter">
                         <summary>Rating</summary>
                         <ul class="filter-list">
                             <li class="filter-item">
                                 <label class="checkbox row">
-                                    <input type="checkbox">
+                                    <input type="checkbox" checked>
                                     <p class="title">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
@@ -159,7 +164,7 @@
                             </li>
                             <li class="filter-item">
                                 <label class="checkbox row">
-                                    <input type="checkbox">
+                                    <input type="checkbox" checked>
                                     <p class="title">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
@@ -171,7 +176,7 @@
                             </li>
                             <li class="filter-item">
                                 <label class="checkbox row">
-                                    <input type="checkbox">
+                                    <input type="checkbox" checked>
                                     <p class="title">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
@@ -182,7 +187,7 @@
                             </li>
                             <li class="filter-item">
                                 <label class="checkbox row">
-                                    <input type="checkbox">
+                                    <input type="checkbox" checked>
                                     <p class="title">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
@@ -192,7 +197,7 @@
                             </li>
                             <li class="filter-item">
                                 <label class="checkbox row">
-                                    <input type="checkbox">
+                                    <input type="checkbox" checked>
                                     <p class="title">
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         1/5
