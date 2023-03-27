@@ -137,6 +137,8 @@ let flashlightSwiper = new Swiper('.product-section_flashlight .product-swiper',
 })
 fillProductsSwiper(flashlightProducts, flashlightSwiper);
 
+
 for (let swiper of document.querySelectorAll('.swiper')) {
-    swiper.swiper.slideTo(1+swiper.swiper.passedParams.slidesPerView, 100);
+    swiper = swiper.swiper;
+    swiper.slideTo(1+swiper.passedParams.slidesPerGroup, 100);
 }
