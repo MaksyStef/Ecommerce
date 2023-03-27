@@ -198,7 +198,7 @@ class Product(PolymorphicModel):
             MaxValueValidator(100),
         ]
     )
-    created_at = models.DateTimeField(auto_now=True, auto_created=True)
+    created_at = models.DateTimeField(auto_created=True)
     sellable = models.BooleanField(default=True)
     sold = models.PositiveIntegerField(default=0)
     bonus_points = models.PositiveIntegerField(editable=False, blank=True, null=True)
