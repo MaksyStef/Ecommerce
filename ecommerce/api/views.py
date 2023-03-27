@@ -63,7 +63,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         get_params = self.request.query_params.get
 
         if get_params('limit') and queryset.count() >= int(get_params('limit')):
-            queryset = queryset[:get_params('limit')]
+            queryset = queryset[:int(get_params('limit'))]
         if get_params('discount'):
             try:
                 mn, mx = get_params('discount').split('_') # split minimal and maximal discount from 1_5 (1 to 5) format
