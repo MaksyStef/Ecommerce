@@ -4,11 +4,9 @@ import * as base from './base.js';
 // Fill product cards
 const baseUrl = location.protocol+"//"+location.host+JSON.parse(document.querySelector("#ApiUrl")?.textContent); // Get API URL
 var apiParams = new URLSearchParams(); // String of additional query parameters
-
+var totalItemsCount;
 const limit = 24; // Number of items to display per page
 let currentPage = 1;
-let totalItemsCount = await fetch(baseUrl + "total-count").then(response => response.json());
-totalItemsCount = totalItemsCount['total_count']
 
 
 // Helper function to fetch data from the API and update the UI
@@ -18,11 +16,11 @@ function updatePage() {
     // Create apiUrl
     let apiUrl = new URL(baseUrl);
     apiUrl.search = apiParams.toString();
-    console.log(apiUrl.toString());
     // Refill product list
     fetch(apiUrl.toString())
     .then(res => res.json())
     .then(data => {
+            totalItemsCount = data.count;
             const products = data.results;
             const productList = document.querySelector('.products-list');
             productList.innerHTML = ""; // Clear out previous results
@@ -167,23 +165,50 @@ for (let details of detailsList) {
 
 
 // Filters system
-function toggleSubcatsExcludeParam(e) {
-    // Get the value of the "subcat-id" input field of the parent element
-    const subcatId = e.target.parentElement.querySelector('input[name="subcat-id"]').value;
-
-    // Add the "rating_exclude" parameter to the URL string with the subcatId value
-    if (urlParams.length > 0) { // if any other params and not 
-        urlParams += "&";
+const filterButton = document.querySelector('#filterButton')
+filterButton.onclick = e => {
+    let aside = document.querySelector('aside.filters');
+    
+    // Filter gap parameters
+    for (let gapFilter of aside.querySelectorAll('.filter_range-filter')) {
+        let paramName = gapFilter.querySelector('input[name="param-name"]').value;
+        let inputMin = gapFilter.querySelector('.input-min');
+        let inputMax = gapFilter.querySelector('.input-max');
+        let paramValue = inputMin.value + '_' + inputMax.value;
+        if ((inputMin.value != inputMin.getAttribute('min')) || (inputMax.value != inputMax.getAttribute('max'))) {
+            apiParams.set(paramName, paramValue);
+        }
     }
-        
-    const myRegex = /exclude_subcats=\d+(,\d+)*/;
-    const match = urlParams.match(myRegex);
+    // Filter subcats
+    var changed = false;
+    let excludeSubcats = [];
+    for (let filter of aside.querySelectorAll('.filter_checkbox:not(.filter_rating)')) {
+        for (let input of filter.querySelectorAll('input[type="checkbox"]:not(:checked)')) {
+            let excludeId = input.parentElement.querySelector('input[name=exclude]').value;
+            excludeSubcats.push(excludeId);
+            changed = true;
+        }
+    }
+    if (changed===true) { apiParams.set('exclude_subcat', String(excludeSubcats)) };
 
-}
-for (let filterCat of document.querySelectorAll('.filterCat')) {
-    filterCat.onclick = toggleSubcatsExcludeParam
+    // Filter rating
+    changed = false;
+    let filterRating = document.querySelector('.filter_rating');
+    let excludeRating = [];
+    for (let input of filterRating.querySelectorAll('input[type="checkbox"]:not(:checked)')) {
+        let excludeValue = input.parentElement.querySelector('input[name=exclude]').value;
+        excludeRating.push(excludeValue);    
+        changed = true;
+    }
+    if (changed===true) { apiParams.set('exclude_rating', String(excludeRating)) };
+    updatePage();
 }
 
-function filterButtons(e) {
 
-}
+// Ordering system
+const orderButton = document.querySelector('#ordering');
+orderButton.addEventListener('focusout', e => {
+    apiParams.set('ordering', orderButton.value);
+    updatePage();
+    console.log(apiParams.toString());
+})

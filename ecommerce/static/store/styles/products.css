@@ -811,6 +811,9 @@ body {
   @media (max-width: 1760px) {
     .subheader {
       padding-right: calc( 20px + 108 * ((100vw - 320px) / 1440)); } }
+  .subheader .row_buttons {
+    justify-content: space-between;
+    align-items: center; }
   .subheader .filter-cat-title {
     font-size: 1.25rem;
     font-weight: bold; }
@@ -837,6 +840,35 @@ body {
         filter: grayscale(1);
         background-image: url("../images/icons/arrow-icon.svg");
         scale: 0.8; }
+  .subheader .ordering {
+    position: relative; }
+    .subheader .ordering #ordering {
+      font-family: inherit;
+      font-size: 1rem;
+      -webkit-appearance: none;
+      transition: 0.2s;
+      padding: 8px 16px;
+      background-color: transparent;
+      border: 3px solid rgba(0, 0, 0, 0.2);
+      cursor: pointer; }
+      .subheader .ordering #ordering:hover, .subheader .ordering #ordering:focus, .subheader .ordering #ordering:active {
+        border: 3px solid var(--orange-color);
+        box-shadow: 0px 2px 8px 1px rgba(0, 0, 0, 0.2); }
+      .subheader .ordering #ordering option:checked {
+        background-color: var(--orange-color);
+        color: var(--main-color); }
+      .subheader .ordering #ordering option:hover {
+        background-color: var(--orange-color);
+        color: var(--main-color); }
+    .subheader .ordering::before {
+      content: 'Ordering';
+      font-weight: 400;
+      font-size: 0.875rem;
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 4px;
+      translate: 0 -120%; }
 
 aside.filters {
   width: clamp(310px, 100%, 480px);
@@ -1012,7 +1044,8 @@ aside.filters {
           background-color: transparent;
           cursor: default;
           position: relative;
-          color: var(--main-color); }
+          color: var(--main-color);
+          pointer-events: none; }
           .products__pagination .pages button.active::before {
             content: '';
             position: absolute;

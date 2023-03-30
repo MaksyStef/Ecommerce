@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Q
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from . import serializers
@@ -14,6 +14,9 @@ import json
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = Product.objects.filter(sellable=True)
+
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['price', 'rating', 'sold']
 
     def get_gap_params(self) -> list[dict[str, ...]]:
         params = []
@@ -38,7 +41,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_exclude_params(self) -> list[dict[str, ...]]:
         params = []
         for param, value in self.request.GET.items():
-            if "_gap" in param:
+            if "exclude_" in param:
                 exclude_list = value.split(",")
                 exclude_list = list(map(lambda x: int(x), exclude_list))
                 params.append({
@@ -52,11 +55,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         filter_kwargs = {
             f"{field_name}_pk__in": param['exclude_list'],
         }
-        if filter_name == "rating":
+        if field_name == "rating":
             filter_kwargs = {
                 f"{field_name}__in": param['exclude_list'],
             }
-        return queryset.filter(**filter_kwargs) # same to qst.filter(field__in=exclude_list)
+        return queryset.exclude(**filter_kwargs) # same to qst.filter(field__in=exclude_list)
 
 
     def get_queryset(self):
@@ -80,10 +83,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = self.exclude_filter(param, queryset)
         return queryset
 
-
-    @action(methods=['get'], detail=False, url_path='total-count', url_name='total_count')
-    def objects_total_count(self, request, *args, **kwargs):
-        return JsonResponse({'total_count': self.queryset.all().count()})
 
     @action(methods=['put'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='rate', url_name='rate')

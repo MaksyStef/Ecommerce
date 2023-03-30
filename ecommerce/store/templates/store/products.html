@@ -10,10 +10,10 @@
         {% include "store/header.html" %}
         <main class="content">
             <header class="subheader column">
-                <div class="row">
+                <div class="row row_cat-title">
                     <h1 class="filter-cat-title">{{prods_cat.title|title}}</h1>
                 </div>
-                <div class="row">
+                <div class="row row_buttons">
                     <div class="hierarchy-links row">
                         <a href="{% url 'store:homepage' %}">Homepage</a>
                         {% if prods_cat.cat %}
@@ -30,7 +30,11 @@
                         {% endif %}
                     </div>
                     <div class="ordering">
-                        
+                        <select name="ordering" id="ordering">
+                            {% for value, name in orderings.items %}
+                            <option value="{{value}}">{{name|title}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </header>
@@ -56,6 +60,7 @@
                                     <input type="range" class="range-min" min="{{min_price}}" max="{{max_price}}" value="{{min_price}}" step="1">
                                     <input type="range" class="range-max" min="{{min_price}}" max="{{max_price}}" value="{{max_price}}" step="1">
                                 </div>
+                                <input type="hidden" name="param-name" value="price_gap">
                             </li>
                         </ul>
                     </details>
@@ -69,10 +74,15 @@
                                     <input type="checkbox" checked>
                                     <p class="title">{{subcat.title}}</p>
                                     <p class="count">({{subcat.get_products.count}})</p>
-                                    <input type="hidden" name="subcat-id" value="{{subcat.pk}}">
+                                    <input type="hidden" name="exclude" value="{{subcat.pk}}">
                                 </label>
                             </li>
                             {% endfor %}
+                            {% comment %}
+                                <input type="hidden" name="param-name"> 
+                                IS NOT NECESSARY because that's subcats getting excluded, 
+                                has nothing to do with cats
+                            {% endcomment %}
                         </ul>
                     </details>
                     {% endfor %}
@@ -83,10 +93,10 @@
                             <li class="filter-item">
                                 <div class="number-input">
                                     <div class="field">
-                                        <input type="number" class="input-min" value="{{f.min}}">
+                                        <input type="number" class="input-min" min="{{f.min}}" max="{{f.max}}" value="{{f.min}}">
                                     </div>
                                     <div class="field">
-                                        <input type="number" class="input-max" value="{{f.max}}">
+                                        <input type="number" class="input-max" min="{{f.min}}" max="{{f.max}}" value="{{f.max}}">
                                     </div>
                                 </div>
                                 <div class="slider">
@@ -97,8 +107,8 @@
                                     <input type="range" class="range-max" min="{{f.min}}" max="{{f.max}}" value="{{f.max}}" step="1">
                                 </div>
                             </li>
+                            <input type="hidden" name="param-name" value="{{f.param_name}}">
                         </ul>
-                        <input type="hidden" name="filter-query" value="{{f.query}}">
                     </details>
                     {% endfor %}
                     <details class="filter_rating filter_checkbox filter">
@@ -115,6 +125,7 @@
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         5/5
                                     </p>
+                                    <input type="hidden" name="exclude" value="5">
                                 </label>
                             </li>
                             <li class="filter-item">
@@ -127,7 +138,8 @@
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         4/5
                                     </p>
-                                </label>
+                                    <input type="hidden" name="exclude" value="4">
+                                </LABEL>
                             </li>
                             <li class="filter-item">
                                 <label class="checkbox row">
@@ -138,6 +150,7 @@
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         3/5
                                     </p>
+                                    <input type="hidden" name="exclude" value="3">
                                 </label>
                             </li>
                             <li class="filter-item">
@@ -148,6 +161,7 @@
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         2/5
                                     </p>
+                                    <input type="hidden" name="exclude" value="2">
                                 </label>
                             </li>
                             <li class="filter-item">
@@ -157,8 +171,10 @@
                                         <img src="{% static 'store/images/icons/star-icon.svg' %}" alt="Star icon">
                                         1/5
                                     </p>
+                                    <input type="hidden" name="exclude" value="1">
                                 </label>
                             </li>
+                            <input type="hidden" name="param-name" value="exclude_rating">
                         </ul>
                     </details>
                     <button id="filterButton" style="border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0 0 #fff;" class="btn btn-orange row flex-center">Filter</button>

@@ -59,6 +59,16 @@ class ProductsView(TemplateView):
             'max_price': int(self.model.objects.all().order_by('-price')[0].price)+1 if self.model.objects.all().count() > 0 else None,
             'min_price': int(self.model.objects.all().order_by('price')[0].price)    if self.model.objects.all().count() > 0 else None,
             'api_url': f'/api/{slugify(self.model.__name__)}/', # Set API url depending on self.model
+            'orderings': {
+                '-created_at': "Newer",
+                'created_at': "Older",
+                '-price': "Higher price",
+                'price': "Lower price",
+                '-rating': "Higher rating",
+                'rating': "Lower rating",
+                '-sold': "Most popular",
+                'sold': "Least popular",
+            }
         })
         return context
     
@@ -82,6 +92,7 @@ class CertainProductsView(ProductsView):
                 min_value = getattr(self.model.objects.all().order_by(field.name)[0], field.name)
                 field_dict = {
                     'title': field.name.replace('_', ' '),
+                    'param_name': field.name + '_gap',
                     'max': max_value,
                     'min': min_value
                 }
