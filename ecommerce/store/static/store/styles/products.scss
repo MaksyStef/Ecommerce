@@ -304,6 +304,7 @@ aside.filters {
                     cursor: default;
                     position: relative;
                     color: var(--main-color);
+                    pointer-events: none;
                     &::before {
                         content: '';
                         position: absolute;
