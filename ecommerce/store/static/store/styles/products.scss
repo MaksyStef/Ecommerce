@@ -269,18 +269,38 @@ aside.filters {
 
         .arrow-prev-container,
         .arrow-next-container {
+            background-color: transparent;
+            pointer-events: none;
+            filter: brightness(0);
+            opacity: 0.45;
         }
         .arrow-prev-container {
             -moz-transform: scale(-1, -1);
             -o-transform: scale(-1, -1);
             -webkit-transform: scale(-1, -1);
             transform: scale(-1, -1);
+            &.active {
+                opacity: 1;
+                filter: none;
+                pointer-events: initial;
+            }
         }
         .arrow-next-container {
-        }
-        .page-item {
             &.active {
-                .page-link {
+                opacity: 1;
+                filter: none;
+                pointer-events: initial;
+            }
+        }
+        .pages {
+            gap: inherit;
+            flex: 1 1 auto;
+
+            button {
+                background-color: transparent;
+                font-size: inherit;
+                &.active {
+                    background-color: transparent;
                     cursor: default;
                     position: relative;
                     color: var(--main-color);

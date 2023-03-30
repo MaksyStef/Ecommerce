@@ -38,41 +38,48 @@ function updatePage() {
 // Helper function to update the pagination links at the bottom of the page
 function updatePagination() {
     const totalPages = Math.ceil(totalItemsCount / limit);
-    const paginationContainer = document.querySelector('.products__pagination');
+    const paginationContainer = document.querySelector('.products__pagination .pages');
     paginationContainer.innerHTML = ''; // Clear out previous pagination links
     // Add "Previous" link if not on first page
+    const previousLink = document.querySelector('.arrow-prev-container');
     if (currentPage > 1) {
-        const previousLink = document.createElement('a');
-        previousLink.innerText = '« Previous';
-        previousLink.href = '#';
         previousLink.addEventListener('click', () => {
             currentPage--;
             updatePage();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.focus();
         });
-        paginationContainer.appendChild(previousLink);
+        previousLink.classList.add('active')
+    }
+    else {
+        previousLink.classList.remove('active')
     }
     // Add numbered page links
     for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement('a');
+        const pageLink = document.createElement('button');
         pageLink.innerText = i;
-        pageLink.href = '#';
         pageLink.className = i === currentPage ? 'active' : '';
         pageLink.addEventListener('click', () => {
             currentPage = i;
             updatePage();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.focus();
         });
         paginationContainer.appendChild(pageLink);
     }
     // Add "Next" link if not on last page
+    const nextLink = document.querySelector('.arrow-next-container');
     if (currentPage < totalPages) {
-        const nextLink = document.createElement('a');
-        nextLink.innerText = 'Next »';
-        nextLink.href = '#';
         nextLink.addEventListener('click', () => {
             currentPage++;
             updatePage();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.focus();
         });
-        paginationContainer.appendChild(nextLink);
+        nextLink.classList.add('active')
+    }
+    else {
+        nextLink.classList.remove('active')
     }
 }
 updatePage(); // Initial call to fetch and display the first page of results

@@ -167,30 +167,15 @@
                     <ul class="products-list">
                     </ul>
                     <div class="products__pagination row">
-                        {% comment %} <a href="{% get_prev_page_link request.get_full_path %}" class="arrow-prev-container {% if page_obj.has_previous %}active{% endif %}">
+                       <button class="arrow-prev-container">
                             <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="Previous Page">
-                        </a>
-                        {% get_proper_elided_page_range paginator page_obj.number as page_range %}
-                        {% for page_num in page_range %}
-                            {% if page_obj.number == page_num %}
-                                <span class="active page-item">
-                                    <span class="page-link row flex-center">{{ page_num }}</span>
-                                </span>
-                            {% else %}
-                                {% if page_num == paginator.ELLIPSIS %}
-                                    <span class="page-item">
-                                        <span class="page-link row flex-center">{{ paginator.ELLIPSIS }}</span>
-                                    </span>
-                                {% else %}
-                                    <span class="page-item">
-                                        <a class="page-link row flex-center" href="{% get_number_page_link page_num request.get_full_path %}">{{page_num}}</a>
-                                    </span>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        <a href="{% get_next_page_link get_full_path %}" class="arrow-next-container {% if page_obj.has_next %}active{% endif %}">
+                        </button>
+                        <ul class="pages row flex-center">
+                            <!-- Here is pages -->
+                        </ul>
+                        <button class="arrow-next-container">
                             <img src="{% static 'store/images/icons/arrow-icon.svg' %}" alt="Next Page">
-                        </a> {% endcomment %}
+                        </button>
                     </div>
                 </section>
             </div>
