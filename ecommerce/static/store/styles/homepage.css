@@ -222,14 +222,14 @@
       .product-card__row_composition .favourite-y {
         transition: 0.25s;
         scale: 0; }
-  .product-card__rating {
+  .product-card__stars {
     gap: 0.5rem;
     align-items: center;
     pointer-events: none; }
-    .product-card__rating button.rate {
+    .product-card__stars button.rate {
       height: 1.125rem;
       pointer-events: visible; }
-      .product-card__rating button.rate img {
+      .product-card__stars button.rate img {
         height: 100%; }
   .product-card__price {
     margin-right: auto; }

@@ -60,20 +60,21 @@
                         </ul>
                     </details>
                     {% for cat in filter_cats %}
-                        <details class="filter_checkbox filter">
-                            <summary>{{cat.title}}</summary>
-                            <ul class="filter-list">
-                                {% for subcat in cat.get_subcats %}
-                                <li class="filter-item">
-                                    <label class="checkbox row">
-                                        <input type="checkbox" checked>
-                                        <p class="title">{{subcat.title}}</p>
-                                        <p class="count">({{subcat.get_products.count}})</p]>
-                                    </label>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </details>
+                    <details class="filter_checkbox filter">
+                        <summary>{{cat.title}}</summary>
+                        <ul class="filter-list">
+                            {% for subcat in cat.get_subcats %}
+                            <li class="filter-item">
+                                <label class="filterCat checkbox row">
+                                    <input type="checkbox" checked>
+                                    <p class="title">{{subcat.title}}</p>
+                                    <p class="count">({{subcat.get_products.count}})</p>
+                                    <input type="hidden" name="subcat-id" value="{{subcat.pk}}">
+                                </label>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </details>
                     {% endfor %}
                     {% for f in range_filters %}
                     <details class="filter_range-filter filter">
@@ -100,52 +101,6 @@
                         <input type="hidden" name="filter-query" value="{{f.query}}">
                     </details>
                     {% endfor %}
-                  {% comment %}
-                      <details class="filter_range-filter filter">
-                          <summary>Edge length</summary>
-                          <ul class="filter-list">
-                              <li class="filter-item">
-                                  <div class="number-input">
-                                      <div class="field">
-                                          <input type="number" class="input-min" value="0">
-                                      </div>
-                                      <div class="field">
-                                          <input type="number" class="input-max" value="100">
-                                      </div>
-                                  </div>
-                                  <div class="slider">
-                                      <div class="progress"></div>
-                                  </div>
-                                  <div class="range-input">
-                                      <input type="range" class="range-min" min="0" max="100" value="0" step="1">
-                                      <input type="range" class="range-max" min="0" max="100" value="100" step="1">
-                                  </div>
-                              </li>
-                          </ul>
-                      </details>
-                      <details class="filter_range-filter filter">
-                          <summary>Edge width</summary>
-                          <ul class="filter-list">
-                              <li class="filter-item">
-                                  <div class="number-input">
-                                      <div class="field">
-                                          <input type="number" class="input-min" value="0">
-                                      </div>
-                                      <div class="field">
-                                          <input type="number" class="input-max" value="100">
-                                      </div>
-                                  </div>
-                                  <div class="slider">
-                                      <div class="progress"></div>
-                                  </div>
-                                  <div class="range-input">
-                                      <input type="range" class="range-min" min="0" max="100" value="0" step="1">
-                                      <input type="range" class="range-max" min="0" max="100" value="100" step="1">
-                                  </div>
-                              </li>
-                          </ul>
-                      </details>
-                  {% endcomment %}
                     <details class="filter_rating filter_checkbox filter">
                         <summary>Rating</summary>
                         <ul class="filter-list">
@@ -206,6 +161,7 @@
                             </li>
                         </ul>
                     </details>
+                    <button id="filterButton" style="border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0 0 #fff;" class="btn btn-orange row flex-center">Filter</button>
                 </aside>
                 <section class="products">
                     <ul class="products-list">

@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Q
 from rest_framework import viewsets, permissions, status
@@ -62,8 +63,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         get_params = self.request.query_params.get
 
-        if get_params('limit') and queryset.count() >= int(get_params('limit')):
-            queryset = queryset[:int(get_params('limit'))]
         if get_params('discount'):
             try:
                 mn, mx = get_params('discount').split('_') # split minimal and maximal discount from 1_5 (1 to 5) format
@@ -79,9 +78,12 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = self.gap_filter(param, queryset)
         for param in self.get_exclude_params():
             queryset = self.exclude_filter(param, queryset)
-
         return queryset
 
+
+    @action(methods=['get'], detail=False, url_path='total-count', url_name='total_count')
+    def objects_total_count(self, request, *args, **kwargs):
+        return JsonResponse({'total_count': self.queryset.all().count()})
 
     @action(methods=['put'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='rate', url_name='rate')

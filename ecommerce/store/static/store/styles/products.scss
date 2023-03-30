@@ -119,7 +119,7 @@ aside.filters {
                 flex: 1 1 auto;
             }
             .slider {
-                margin-top: rem(14);
+                margin: rem(14) 2px 0 2px;
             }
             .checkbox {
                 font-size: rem(14);
@@ -230,7 +230,7 @@ aside.filters {
 
         .filter-item {
             .slider {
-                margin-top: 36px;
+                margin: 36px;
             }
         }
     }
