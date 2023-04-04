@@ -282,12 +282,11 @@ class Product(PolymorphicModel):
         # Return the final list of all unique category objects
         return list(all_cats)
 
-    @classmethod
-    def get_images(model):
+    def get_images(self):
         images = {}
-        for field in [field for field in model._meta.fields if re.match('image_', field.name)]:
+        for field in [field for field in self.__class__._meta.fields if re.match('image_', field.name)]:
             images.update({
-                f'{field.name}':field.url if hasattr(field, 'url') else None,
+                f'{field.name}': getattr(self, field.name).url if hasattr(getattr(self, field.name), 'url') else None,
             })
         return images
     
