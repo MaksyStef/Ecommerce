@@ -113,6 +113,21 @@ class CertainProductsView(ProductsView):
 class ProductView(DetailView):
     model = Product
     template_name = "store/product.html"    
+    context_object_name = "product"
+
+    def get_context_data(self, object, *args, **kwargs):
+        context = super().get_context_data()
+        Supercat: Product = object.__class__
+        context.update({
+            'supercat': {
+                'name': Supercat.__name__,
+                'url': Supercat.get_absolute_url_to_type() if issubclass(Supercat, Product) else '/products/',
+            },
+            'personal_rating': int(object.votes.filter(user=self.request.user)[0].value) if object.votes.filter(user=self.request.user) else None,
+            'in_fav': self.request.user.favourite.products.contains(object) if self.request.user.is_authenticated else None,
+            'in_cart': self.request.user.cart.products.contains(object) if self.request.user.is_authenticated else None,
+        })
+        return context
 
 
 class SearchView(ListView):
@@ -120,6 +135,7 @@ class SearchView(ListView):
     
 
 class ProductContainerView(TemplateView, ContextMixin):
+    """ Anscestor for the views ment to show products in a product container such as Cart or Favourite. """
     template_name = 'store/product_container.html'
 
 

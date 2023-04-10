@@ -1,51 +1,112 @@
-{% extends "store/base.html" %}
 {% load static sass_tags %}
-{% block title %}{{product.title|title}}{% endblock title %}
-{% block extra_head %}
-    <link rel="stylesheet" href="{% sass_src 'store/styles/product.scss' %}">
-{% endblock extra_head %}
-{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{product.title|title}} | ZlatMax</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesomefree/css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesomefree/js/all.js' %}">
+    <link rel="shortcut icon" href="{% static 'store/images/icons/favicon.svg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% sass_src 'store/styles/product.scss' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+</head>
+<body>
+    <div class="load column">
+        <div class="load__container">
+            <div class="load__ring_orange load__ring circle"></div>
+            <div class="load__ring_black load__ring circle"></div>
+            <div class="load__ring_green load__ring circle"></div>
+        </div>
+    </div>
+    <script src="{% static 'store/scripts/onload.js' %}"></script>
     <div class="wrapper column">
         {% include "store/header.html" %}
         <main class="content column">
             <header class="subheader column">
                 <div class="hierarchy-links row">
                     <a href="{% url 'store:homepage' %}">Homepage</a>
-                    <a href="{{product.subcat.get_absolute_url}}">{{product.subcat.title|title}}</a>
+                    <a href="{{supercat.url}}">{{supercat.name|title}}</a>
                     <a class="current" href="{{product.get_absolute_url}}">{{product.title|title}}</a>
                 </div>
             </header>
             <div class="content-container column">
                 <div class="product">
-                    <div class="product__generic row">
-                        <div class="product__image">
-                            <img src="{% if product.image %}{% static product.image.url %}{% endif %}" alt="Product Image">
+                    <div class="product__hiddens" style="display: none;">
+                        <input class="product__id" type="hidden" value="{{product.pk}}">
+                        {% if personal_rating %}
+                            <input class="product__personal-rating" type="hidden" value="{{personal_rating}}">
+                        {% endif %}
+                        <input class="product__rating" type="hidden" value="{{product.rating}}">
+                    </div>
+                    <div class="product__gallery column">
+                        <div class="product__main-image row flex-center">
+                            <img src='{{product.get_images.image_general|default_if_none:"https://i.gifer.com/9IBr.gif"}}'
+                                data-index="1" />
                         </div>
-                        <div class="product__options column">
-                            <div class="column column_1">
-                                <div class="row_1 row">
-                                    <h1>{{product.title|title}}</h1>
-                                    <div class="stars"></div>
-                                    <div class="actions">
-                                        <button class="pushable favourite-btn"></button>
-                                        <button class="compare-btn pushable"></button>
+                        <ul class="product__thumbnail-images row">
+                            {% for key, value in product.get_images.items %}
+                            <div class="thumbnail-image-container">
+                                <img class="thumbnail-image"
+                                    src="{% if value %}{{value}}{% else %}https://i.gifer.com/9IBr.gif{% endif %}"
+                                    alt="{{key}}" data-index="{{forloop.counter}}">
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="product__actions column">
+                        <div class="action-container column">
+                            <div class="action-row_1 action-row row">
+                                <h1 class="product__title row flex-center">{{product.title|title}}</h1>
+                                <div class="product__stars row">
+                                    <button class="rate bg-white">
+                                        <img class="rating-star"
+                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                            alt="rating-star">
+                                    </button>
+                                    <button class="rate bg-white">
+                                        <img class="rating-star"
+                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                            alt="rating-star">
+                                    </button>
+                                    <button class="rate bg-white">
+                                        <img class="rating-star"
+                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                            alt="rating-star">
+                                    </button>
+                                    <button class="rate bg-white">
+                                        <img class="rating-star"
+                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                            alt="rating-star">
+                                    </button>
+                                    <button class="rate bg-white">
+                                        <img class="rating-star"
+                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                            alt="rating-star">
+                                    </button>
+                                </div>
+                                <div class="product__composition row">
+                                    <button class="compare-btn pushable"></button>
+                                    <div class="favourite-toggler {% if in_fav %}active{% endif %}">
+                                        <button class="favourite-n"><img
+                                                src="{% static 'store/images/icons/favourite-icon.svg' %}"
+                                                alt="favorite toggle - no" class="bg-white"></button>
+                                        <button class="favourite-y"><img
+                                                src="{% static 'store/images/icons/favourite_toggled-icon.svg' %}"
+                                                alt="favorite toggled - yes" class="bg-white"></button>
                                     </div>
                                 </div>
-                                <div class="row_2 row">Available</div>
-                            </div>
-                            <div class="column column_2">
-                                <div class="article">{{product.article}}</div>
-                                <div class="manufacturer">{{product.manufacturer}}</div>
-                                <div class="series">{{product.series}}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="product__description column">
-
                     </div>
                 </div>
             </div>
         </main>
         {% include "store/footer.html" %}
+        <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+        {{request.user.is_authenticated|json_script:"authenticated"}}
+        <script type="module" defer src="{% static 'store/scripts/product.js' %}"></script>
     </div>
-{% endblock body %}
+</body>
+</html>

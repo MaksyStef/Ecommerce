@@ -222,14 +222,14 @@
       .product-card__row_composition .favourite-y {
         transition: 0.25s;
         scale: 0; }
-  .product-card__rating {
+  .product-card__stars {
     gap: 0.5rem;
     align-items: center;
     pointer-events: none; }
-    .product-card__rating button.rate {
+    .product-card__stars button.rate {
       height: 1.125rem;
       pointer-events: visible; }
-      .product-card__rating button.rate img {
+      .product-card__stars button.rate img {
         height: 100%; }
   .product-card__price {
     margin-right: auto; }
@@ -242,21 +242,6 @@
 .product-swiper {
   width: 100%;
   padding: 1rem 0.25rem; }
-  .product-swiper .products-row {
-    display: grid;
-    margin: 0 0 2rem 0;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 1fr;
-    grid-gap: 1rem;
-    place-content: center; }
-    .product-swiper .products-row .product-card {
-      margin: 0 auto; }
-    @media (max-width: 1420px) {
-      .product-swiper .products-row {
-        grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 767px) {
-      .product-swiper .products-row {
-        grid-template-columns: repeat(1, 1fr); } }
   .product-swiper .swiper-wrapper {
     padding: 0 0 1.5rem 0; }
   .product-swiper .swiper-pagination-bullet {

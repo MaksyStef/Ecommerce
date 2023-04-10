@@ -336,25 +336,6 @@
     width: 100%;
     padding: rem(16) rem(4);
 
-    .products-row {
-        display: grid;
-        margin: 0 0 rem(32) 0;
-        grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: 1fr;
-        grid-gap: rem(16);
-        place-content: center;
-    
-        .product-card {
-            margin: 0 auto;
-        }
-    
-        @media (max-width: 1420px) {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        @media (max-width: 767px) {
-            grid-template-columns: repeat(1, 1fr);
-        }
-    }
     .swiper-wrapper {
         padding: 0 0 rem(24) 0;
     }
