@@ -56,7 +56,7 @@
                         </ul>
                     </div>
                     <div class="product__actions column">
-                        <div class="action-container column">
+                        <div class="action-container_1 action-container column">
                             <div class="action-row_1 action-row row">
                                 <h1 class="product__title row flex-center">{{product.title|title}}</h1>
                                 <div class="product__stars row">
@@ -67,13 +67,13 @@
                                     </button>
                                     <button class="rate bg-white">
                                         <img class="rating-star"
-                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
-                                            alt="rating-star">
+                                        src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                        alt="rating-star">
                                     </button>
                                     <button class="rate bg-white">
                                         <img class="rating-star"
-                                            src="{% static 'store/images/icons/emptystar-icon.svg' %}"
-                                            alt="rating-star">
+                                        src="{% static 'store/images/icons/emptystar-icon.svg' %}"
+                                        alt="rating-star">
                                     </button>
                                     <button class="rate bg-white">
                                         <img class="rating-star"
@@ -90,15 +90,51 @@
                                     <button class="compare-btn pushable"></button>
                                     <div class="favourite-toggler {% if in_fav %}active{% endif %}">
                                         <button class="favourite-n"><img
-                                                src="{% static 'store/images/icons/favourite-icon.svg' %}"
-                                                alt="favorite toggle - no" class="bg-white"></button>
-                                        <button class="favourite-y"><img
+                                            src="{% static 'store/images/icons/favourite-icon.svg' %}"
+                                            alt="favorite toggle - no" class="bg-white"></button>
+                                            <button class="favourite-y"><img
                                                 src="{% static 'store/images/icons/favourite_toggled-icon.svg' %}"
                                                 alt="favorite toggled - yes" class="bg-white"></button>
                                     </div>
                                 </div>
                             </div>
+                            <div class="action-row_2 action-row row">
+                                {% if product.in_stock > 0 %}<span class="green">{{product.in_stock}} in stock{% else %}<span class="red">None in stock{% endif %}</span>
+                            </div>
                         </div>
+                        <div class="action-container_2 action-container column">
+                            <div class="action-row_1 action-row row">
+                                <h1>Article</h1>
+                                <span>{{product.get_article}}</span>
+                            </div>
+                            <div class="action-row_2 action-row row">
+                                <h1>Manufacturer</h1>
+                                <span>{{manufacturer}}</span>
+                            </div>
+                            <div class="action-row_3 action-row row">
+                                <h1>Series</h1>
+                                <span>{{series}}</span>
+                            </div>
+                        </div>
+                        <div class="action-container_3 action-container column">
+                            {% for cat, subcats in cats %}
+                            <div class="action-row row">
+                                <h1>{{cat}}</h1>
+                                <div class="dropdown">
+                                    <div class="dropdown-header row" tabindex="0">
+                                        <span data-subcat="{{subcats.first.pk}}">{{subcats.first.title}}</span>
+                                    </div>
+                                    <ul class="dropdown-menu">
+                                        {% for subcat in subcats %}
+                                        <li data-subcat="{{subcat.pk}}">{{subcat.title|title}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="product__description">
                     </div>
                 </div>
             </div>

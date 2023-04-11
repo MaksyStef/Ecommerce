@@ -118,6 +118,8 @@ class ProductView(DetailView):
     def get_context_data(self, object, *args, **kwargs):
         context = super().get_context_data()
         Supercat: Product = object.__class__
+        cats = list(object.cats.all())
+        subcats = object.subcats.all()
         context.update({
             'supercat': {
                 'name': Supercat.__name__,
@@ -126,6 +128,9 @@ class ProductView(DetailView):
             'personal_rating': int(object.votes.filter(user=self.request.user)[0].value) if object.votes.filter(user=self.request.user) else None,
             'in_fav': self.request.user.favourite.products.contains(object) if self.request.user.is_authenticated else None,
             'in_cart': self.request.user.cart.products.contains(object) if self.request.user.is_authenticated else None,
+            'manufacturer': object.subcats.get(cat__title="manufacturer") if object.cats.filter(title="manufacturer").exists() else None,
+            'series': object.subcats.get(cat__title="series") if object.cats.filter(title="series").exists() else None,
+            'cats' : list(map(lambda cat: (cat.title, cat.get_subcats(subcats=subcats)), cats))
         })
         return context
 

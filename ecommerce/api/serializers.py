@@ -42,10 +42,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return obj.get_absolute_url()
 
     def _format_article(self, obj):
-        stringified_num = str(obj.article)
-        while len(stringified_num) < 18:
-            stringified_num = '0' + stringified_num        
-        return stringified_num
+        return obj.get_article()
 
     def _personal_rating_func(self, obj):
         try:

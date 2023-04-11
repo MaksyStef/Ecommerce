@@ -189,3 +189,22 @@ let toggler = document.querySelector('.favourite-toggler')
 for (let btn of toggler.children) {
     btn.onclick = () => toggleFavourite(btn);
 }
+
+// Dropdown menus init
+const dropdownHeaders = document.querySelectorAll(".dropdown-header");
+
+dropdownHeaders.forEach(dropdownHeader => {
+    let dropdownMenu = dropdownHeader.nextElementSibling;
+    dropdownHeader.addEventListener("click", () => {
+        dropdownMenu.classList.toggle("active");
+        dropdownHeader.classList.toggle("active");
+    });
+    dropdownMenu.addEventListener("click", (event) => {
+      const selectedOption = event.target;
+      dropdownHeader.textContent = selectedOption.textContent;
+      dropdownHeader.setAttribute('data-subcat', selectedOption.getAttribute('data-subcat'));
+      dropdownMenu.classList.remove("active");
+      dropdownHeader.classList.remove("active");
+    });
+})
+

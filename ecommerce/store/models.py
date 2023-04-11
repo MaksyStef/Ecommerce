@@ -132,7 +132,7 @@ class Category(AbstractCategory):
     def get_subcats(self, ordering:str="created_at", subcats:QuerySet=None) -> QuerySet:
         """ Return all subcats related to Category object if not given Subcategory QuerySet """
         if subcats:
-            return subcats.objects.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
+            return subcats.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
         return Subcategory.objects.filter(cat_id=self.id).order_by(ordering if ordering else "created_at")
 
     def get_products(self, model='Product', queryset=None): # we'll define Product model later, so we use globals() to "predefine" it
@@ -259,6 +259,12 @@ class Product(PolymorphicModel):
 
     def get_personal_rating(self, user: User):
         return self.votes.get(user_id=user.pk).value if user and self.votes.filter(user_id=user.pk).exists() else None
+    
+    def get_article(self):
+        stringified_num = str(self.article)
+        while len(stringified_num) < 18:
+            stringified_num = '0' + stringified_num        
+        return stringified_num
 
     @classmethod
     def get_type_cats(model, ordering:str="created_at", **filters):
