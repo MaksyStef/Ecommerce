@@ -213,6 +213,8 @@ class Product(PolymorphicModel):
     image_general = models.ImageField(upload_to='store/images/products/general/', null=True, blank=True)
     rating = models.PositiveIntegerField(default=0, editable=False, blank=True)
 
+    properties: list[str] = [ ]
+
     class Meta:
         ordering = ['created_at']
 
@@ -298,6 +300,14 @@ class Product(PolymorphicModel):
     
     def get_absolute_url(self):
         return reverse('store:product', kwargs={'slug': self.slug})
+    
+    def get_properties(self):
+        props = {}
+        for p in self.properties:
+            p_name = p.replace('_', ' ')
+            props.update({f"{p_name}": getattr(self, p)})
+        print(props)
+        return props
 
     def __str__(self):
         return self.title
@@ -373,6 +383,13 @@ class Knife(Product, ProductChildMixin):
     image_guard_and_back = models.ImageField(upload_to="store/images/products/knives/guard_and_back/", null=True, blank=True)
     materials = models.CharField(max_length=99, default="")
 
+    properties = [
+        'materials',
+        'total_length',
+        'edge_length',
+        'edge_width',
+    ]
+
     def get_size(self):
         return f"{self.total_length}x{self.edge_width}"
 
@@ -400,6 +417,14 @@ class Melee(Product, ProductChildMixin):
     image_guard_and_back = models.ImageField(upload_to="store/images/products/melee/guard_and_back/", null=True, blank=True)
     materials = models.CharField(max_length=99, default="")
 
+    properties = [
+        'materials',
+        'total_length',
+        'edge_length',
+        'edge_width',
+        'edge_thickness',
+    ]
+
     def get_size(self):
         return f"{self.total_length}x{self.edge_width} ({self.edge_thickness})"
 
@@ -416,7 +441,8 @@ class Souvenir(Product, ProductChildMixin):
     Usage: This class is used as part of a product hierarchy to provide additional functionality.
     """
     materials = models.CharField(max_length=99, default="", null=True)
-
+    
+    properties = ['materials',]
 
 class Flashlight(Product, ProductChildMixin):
     """
@@ -444,6 +470,14 @@ class Flashlight(Product, ProductChildMixin):
     thickness = models.PositiveIntegerField(default=0)
     materials = models.CharField(max_length=99, default="")
 
+    properties = [
+        'power',
+        'battery_capacity',
+        'width',
+        'length',
+        'thickness',
+        'materials',
+    ]
 
 class Accompanying(Product, ProductChildMixin):
     """

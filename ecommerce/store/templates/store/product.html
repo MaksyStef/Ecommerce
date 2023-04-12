@@ -39,6 +39,7 @@
                             <input class="product__personal-rating" type="hidden" value="{{personal_rating}}">
                         {% endif %}
                         <input class="product__rating" type="hidden" value="{{product.rating}}">
+                        <input class="product__base-price" type="hidden" value="{{product.price}}">
                     </div>
                     <div class="product__gallery column">
                         <div class="product__main-image row flex-center">
@@ -88,7 +89,7 @@
                                 </div>
                                 <div class="product__composition row">
                                     <button class="compare-btn pushable"></button>
-                                    <div class="favourite-toggler {% if in_fav %}active{% endif %}">
+                                    <div class="favourite-toggler {% if in_fav %}toggled{% endif %}">
                                         <button class="favourite-n"><img
                                             src="{% static 'store/images/icons/favourite-icon.svg' %}"
                                             alt="favorite toggle - no" class="bg-white"></button>
@@ -115,6 +116,10 @@
                                 <h1>Series</h1>
                                 <span>{{series}}</span>
                             </div>
+                            <div class="action-row_3 action-row row">
+                                <h1>Bonus Points</h1>
+                                <span>{{product.bonus_points}}</span>
+                            </div>
                         </div>
                         <div class="action-container_3 action-container column">
                             {% for cat, subcats in cats %}
@@ -133,8 +138,54 @@
                             </div>
                             {% endfor %}
                         </div>
+                        <div class="action-container_4 action-container column">
+                            <div class="action-row row">
+                                <div class="column_1 column">
+                                    <p class="product__price"><span></span>$</p>
+                                    <div class="product__quantity">
+                                        <button class="minus-btn" type="button" name="button">–</button>
+                                        <input class="quantity-input" type="number" name="quantity" value="1" min="1">
+                                        <button class="plus-btn" type="button" name="button">+</button>
+                                      </div>
+                                </div>
+                                <div class="column_2 column">
+                                    <div class="row">
+                                        <p>
+                                            <span>+</span>
+                                            <span class="product__additional-bonus-points"></span>
+                                            <span>points for purchase</span>
+                                        </p>
+                                        <div class="circle-question-mark row flex-center" data-hint="You will get personal bonus points in size of 5% of the product price when you purchase it. You can use them to pay off part of the product price that shown in Bonus Points field.">?</div>
+                                    </div>
+                                    <div class="row">
+                                        {% if in_cart %}
+                                        <button class="btn-orange row pushable toggled">
+                                            Remove from cart<img src="{% static 'store/images/icons/cart-icon.svg' %}">
+                                        </button>
+                                        {% else %}
+                                        <button class="btn-orange row pushable">
+                                            Add to the cart <img src="{% static 'store/images/icons/cart-icon.svg' %}">
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="product__description">
+                    <div class="product__description description column">
+                        <div class="description__row column">
+                            <h1>Description</h1>
+                            <p>{{product.description}}</p>
+                        </div>
+                        <div class="description__row column">
+                            <h1>Properties</h1>
+                            <div class="description__attributes">
+                                {% for property, value in properties.items %}
+                                <h2>{{property|title}}</h2>
+                                <h2>{{value}}</h2>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -142,7 +193,10 @@
         {% include "store/footer.html" %}
         <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
         {{request.user.is_authenticated|json_script:"authenticated"}}
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
         <script type="module" defer src="{% static 'store/scripts/product.js' %}"></script>
+        <script type="module" defer src="{% static 'store/scripts/footer.js' %}"></script>
     </div>
+    {% include 'store/templates.html'   %}
 </body>
 </html>
