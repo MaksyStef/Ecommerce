@@ -29,7 +29,7 @@
     &__header {
         justify-content: flex-start;
         padding: rem(24);
-        margin: 0 0 rem(46) 0;
+        margin: 0 0 rem(22) 0;
         h1 {
             flex: 1 0 auto;
             font-size: rem(24);
@@ -577,6 +577,11 @@
         flex-direction: column;
 
         align-items: center;
+    }
+}
+.product-swiper {
+    .swiper-wrapper {
+        padding: rem(24) rem(20);
     }
 }
 .description {

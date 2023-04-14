@@ -789,7 +789,7 @@ body {
 .product-section__header {
   justify-content: flex-start;
   padding: 1.5rem;
-  margin: 0 0 2.875rem 0; }
+  margin: 0 0 1.375rem 0; }
   .product-section__header h1 {
     flex: 1 0 auto;
     font-size: 1.5rem;
@@ -1183,6 +1183,9 @@ body {
       display: flex;
       flex-direction: column;
       align-items: center; } }
+.product-swiper .swiper-wrapper {
+  padding: 1.5rem 1.25rem; }
+
 .description {
   width: 100%;
   padding: 24px;
