@@ -3,7 +3,17 @@ import * as base from './base.js';
 let scene = document.querySelector('.welcome-section__sheath > .image-container');
 const sheathParallax = new Parallax(scene);
 
-
+const slideTo = () => {
+    if (window.outerWidth >= 768) {
+        return 2;
+    } else if (window.outerHeight >= 1440) {
+        return 4;
+    } else if (window.outerHeight >= 2560) {
+        return 8;
+    } else {
+        return 1;
+    }
+}
 const fillProductsSwiper = (products, swiper) => {
     for (let i = 0; i < 16; i++) {
         var container = document.createElement('div');
@@ -11,6 +21,7 @@ const fillProductsSwiper = (products, swiper) => {
         container.classList.add('swiper-slide', 'row', 'flex-center');
         swiper.appendSlide(container);
     }
+    swiper.slideTo(slideTo(), 100);
 }
 const fillBrandnewProductsSwiper = (products, swiper) => {
     for (let i = 0; i < 9; i++) {
@@ -19,6 +30,7 @@ const fillBrandnewProductsSwiper = (products, swiper) => {
         base.appendProductCard(container, products[i]);
         swiper.appendSlide(container);
     }
+    swiper.slideTo(slideTo(), 100);
 }
 
 const bestsellerSwiper = new Swiper('.bestsellers-section .swiper', {
@@ -47,7 +59,7 @@ const bestsellerSwiper = new Swiper('.bestsellers-section .swiper', {
     },
 });
 
-let products = await base.pullProducts("ordering=sold&limit=16")
+let products = await base.pullProducts("ordering=sold&limit=16");
 fillProductsSwiper(products, bestsellerSwiper);
 
 
@@ -73,8 +85,8 @@ for (let [i, brandnewContainer] of Object.entries(document.querySelectorAll('.br
             el: '.swiper-pagination',
         },
     });
-    products = await base.pullProducts(`ordering=created_at&limit=9&offset=${i * 9}`)
-    fillBrandnewProductsSwiper(products, swipe)
+    products = await base.pullProducts(`ordering=created_at&limit=9&offset=${i * 9}`);
+    fillBrandnewProductsSwiper(products, swipe);
 }
 
 for (let [i, discountedContainer] of Object.entries(document.querySelectorAll('.discounted-section'))) {
@@ -138,7 +150,6 @@ let flashlightSwiper = new Swiper('.product-section_flashlight .product-swiper',
 fillProductsSwiper(flashlightProducts, flashlightSwiper);
 
 
-for (let swiper of document.querySelectorAll('.swiper')) {
-    swiper = swiper.swiper;
-    swiper.slideTo(1+swiper.passedParams.slidesPerGroup, 100);
-}
+// for (let swiper of document.querySelectorAll('.swiper')) {
+//     swiper = swiper.swiper;
+// }

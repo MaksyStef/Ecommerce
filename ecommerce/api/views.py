@@ -18,6 +18,19 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['price', 'rating', 'sold']
 
+    def get_suggestions(self):
+        obj = self.get_object()
+        similar_objects = obj.__class__.objects.exclude(
+            pk=obj.pk
+        ).filter(
+            subcats__id__in=obj.subcats.all().values_list('id', flat=True)
+        ).order_by(*['-created_at'], *[x.replace(' ', '_') for x in obj.get_properties()])
+        return similar_objects
+    
+    def get_buy_altogether(self):
+        obj = self.get_object()
+        return obj.buy_altogether.all()
+
     def get_gap_params(self) -> list[dict[str, ...]]:
         params = []
         for param, value in self.request.GET.items():
@@ -83,6 +96,20 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = self.exclude_filter(param, queryset)
         return queryset
 
+
+    @action(methods=['get'], detail=True, permission_classes=[permissions.AllowAny],
+            url_path='suggestions', url_name='suggestions')
+    def suggestions_view(self, request, *args, **kwargs):
+        products = self.get_suggestions()
+        serializer = self.serializer_class(products, many=True)
+        return JsonResponse(data=serializer.data, safe=False)
+
+    @action(methods=['get'], detail=True, permission_classes=[permissions.AllowAny],
+            url_path='buy-altogether', url_name='buy_altogether')
+    def buy_altogether_view(self, request, *args, **kwargs):
+        products = self.get_buy_altogether()
+        serializer = self.serializer_class(products, many=True)
+        return JsonResponse(data=serializer.data, safe=False)
 
     @action(methods=['put'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='rate', url_name='rate')

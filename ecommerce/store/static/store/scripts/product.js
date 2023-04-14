@@ -1,3 +1,4 @@
+import { appendProductCard, pullProducts } from "./base.js";
 // Image gallery init
 const scrollerContainer = document.querySelector('.product__thumbnail-images');
 const scrollSpeed = 1;
@@ -268,3 +269,70 @@ document.querySelector('.plus-btn').onclick=() => {
 updatePrice();
 
 // Create sliders
+const fillProductsSwiper = (products, swiper) => {
+    for (let i = 0; i < 8; i++) {
+        var container = document.createElement('div');
+        appendProductCard(container, products[i]);
+        container.classList.add('swiper-slide', 'row', 'flex-center');
+        swiper.appendSlide(container);
+    }
+}
+let suggestions = await pullProducts(`${productId.value}/suggestions`);
+let swiper = new Swiper(`.swiper_1`, {
+    // Optional parameters
+    loop: true,
+    spaceBetween: 0,
+    slidesPerView: 1,
+    slidesPerGroup: 1,
+
+    breakpoints: {
+        768 : {
+            slidesPerView: 2,
+            slidesPerGroup: 2,
+        },
+        1440 : {
+            slidesPerGroup: 4,
+            slidesPerView: 4,
+        },
+        2560 : {
+            slidesPerView: 8,
+            slidesPerGroup: 8,
+        },
+    },
+
+    // If we need pagination
+    pagination: {
+        el: '.swiper-pagination',
+    },
+});
+fillProductsSwiper(suggestions, swiper);
+
+let buyAltogether = await pullProducts(`${productId.value}/buy-altogether`);
+swiper = new Swiper(`.swiper_2`, {
+    // Optional parameters
+    loop: true,
+    spaceBetween: 0,
+    slidesPerView: 1,
+    slidesPerGroup: 1,
+
+    breakpoints: {
+        768 : {
+            slidesPerView: 2,
+            slidesPerGroup: 2,
+        },
+        1440 : {
+            slidesPerGroup: 4,
+            slidesPerView: 4,
+        },
+        2560 : {
+            slidesPerView: 8,
+            slidesPerGroup: 8,
+        },
+    },
+
+    // If we need pagination
+    pagination: {
+        el: '.swiper-pagination',
+    },
+});
+fillProductsSwiper(buyAltogether, swiper);

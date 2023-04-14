@@ -32,7 +32,7 @@
                 </div>
             </header>
             <div class="content-container column">
-                <div class="product">
+                <section class="product section">
                     <div class="product__hiddens" style="display: none;">
                         <input class="product__id" type="hidden" value="{{product.pk}}">
                         {% if personal_rating %}
@@ -187,13 +187,40 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+                <section class="discounted-section product-section section bg-white column">
+                    <header class="product-section__header row">
+                        <h1>Suggestion</h1>
+                    </header>
+                    <!-- swiper main container -->
+                    <div class="swiper swiper_1 product-swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper">
+                            <!-- Slides -->
+                        </div>
+                        <!-- Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </section>
+                <section class="discounted-section product-section section bg-white column">
+                    <header class="product-section__header row">
+                        <h1>Buy with it</h1>
+                    </header>
+                    <!-- swiper main container -->
+                    <div class="swiper swiper_2 product-swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper">
+                            <!-- Slides -->
+                        </div>
+                        <!-- Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </section>
             </div>
         </main>
         {% include "store/footer.html" %}
         <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
         {{request.user.is_authenticated|json_script:"authenticated"}}
-        <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
         <script type="module" defer src="{% static 'store/scripts/product.js' %}"></script>
         <script type="module" defer src="{% static 'store/scripts/footer.js' %}"></script>
     </div>

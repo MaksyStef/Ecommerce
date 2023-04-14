@@ -5,14 +5,73 @@
 .content-container {
     width: 100%;
     gap: 24px;
-    @include default-padding();
 
     @media (max-width: 1024px) {
         flex-direction: column;
         align-items: center;
     }
 }
+.section {
+    position: relative;
+    width: 100%;
+    @include default-padding();
 
+    &__container {
+        z-index: 1;
+        width: 100%;
+    }
+
+    @media (max-width: 374px) {
+        padding: 6px;
+    }
+}
+.product-section {
+    &__header {
+        justify-content: flex-start;
+        padding: rem(24);
+        margin: 0 0 rem(46) 0;
+        h1 {
+            flex: 1 0 auto;
+            font-size: rem(24);
+            font-weight: bold;
+        }
+        a {
+            position: relative;
+            display: inline-block;
+            flex: 0 1 auto;
+            color:rgba(#000, 0.5);
+            text-align: center;
+            &::after {
+                --start-posX: 0.5rem;
+                --start-posY: 0;
+                content: '';
+                display: block;
+                position: absolute;
+                right: rem(-8);
+                top: 0;
+                width: rem(8);
+                height: rem(14);
+                background: url('../images/icons/arrow-icon.svg') no-repeat;
+                background-size: contain;
+                translate: var(--start-posX) var(--start-posY);
+                pointer-events: none;
+            }
+            @media (max-width: 375px) {
+                width: min-content;
+                &::after {
+                    --start-posX: 0.25rem;
+                    --start-posY: -50%;
+                    top: 50%;
+                }
+            }
+            &:hover {
+                &::after {
+                    animation: shakeX 0.85s infinite ease-out;
+                }
+            }
+        }
+    }
+}
 .subheader {
     width: 100%;
     gap: rem(20);

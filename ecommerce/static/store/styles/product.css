@@ -756,27 +756,74 @@ body {
 
 .content-container {
   width: 100%;
-  gap: 24px;
+  gap: 24px; }
+  @media (max-width: 1024px) {
+    .content-container {
+      flex-direction: column;
+      align-items: center; } }
+.section {
+  position: relative;
+  width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 128px;
   padding-right: 128px; }
   @media (max-width: 1760px) {
-    .content-container {
+    .section {
       padding-top: calc( 16px + 4 * ((100vw - 320px) / 1440)); } }
   @media (max-width: 1760px) {
-    .content-container {
+    .section {
       padding-bottom: calc( 16px + 4 * ((100vw - 320px) / 1440)); } }
   @media (max-width: 1760px) {
-    .content-container {
+    .section {
       padding-left: calc( 20px + 108 * ((100vw - 320px) / 1440)); } }
   @media (max-width: 1760px) {
-    .content-container {
+    .section {
       padding-right: calc( 20px + 108 * ((100vw - 320px) / 1440)); } }
-  @media (max-width: 1024px) {
-    .content-container {
-      flex-direction: column;
-      align-items: center; } }
+  .section__container {
+    z-index: 1;
+    width: 100%; }
+  @media (max-width: 374px) {
+    .section {
+      padding: 6px; } }
+.product-section__header {
+  justify-content: flex-start;
+  padding: 1.5rem;
+  margin: 0 0 2.875rem 0; }
+  .product-section__header h1 {
+    flex: 1 0 auto;
+    font-size: 1.5rem;
+    font-weight: bold; }
+  .product-section__header a {
+    position: relative;
+    display: inline-block;
+    flex: 0 1 auto;
+    color: rgba(0, 0, 0, 0.5);
+    text-align: center; }
+    .product-section__header a::after {
+      --start-posX: 0.5rem;
+      --start-posY: 0;
+      content: '';
+      display: block;
+      position: absolute;
+      right: -0.5rem;
+      top: 0;
+      width: 0.5rem;
+      height: 0.875rem;
+      background: url("../images/icons/arrow-icon.svg") no-repeat;
+      background-size: contain;
+      translate: var(--start-posX) var(--start-posY);
+      pointer-events: none; }
+    @media (max-width: 375px) {
+      .product-section__header a {
+        width: min-content; }
+        .product-section__header a::after {
+          --start-posX: 0.25rem;
+          --start-posY: -50%;
+          top: 50%; } }
+    .product-section__header a:hover::after {
+      animation: shakeX 0.85s infinite ease-out; }
+
 .subheader {
   width: 100%;
   gap: 1.25rem;

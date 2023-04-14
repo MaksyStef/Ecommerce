@@ -169,6 +169,8 @@ class Product(PolymorphicModel):
 
     votes - A ManyToManyField, referencing the Vote model.
 
+    buy_altogether - A ManyToManyField, referencing the Product model that's filled with products that are bought toger with this product.
+
     subcats - A ManyToManyField, referencing the Subcategory model.
 
     cats - A ManyToManyField, referencing the Category model, which is not editable.
@@ -207,6 +209,7 @@ class Product(PolymorphicModel):
     description = models.TextField(verbose_name="Product description")
     article = models.SmallIntegerField(validators=[MaxValueValidator(999999999999999999), MinValueValidator(0)])
     votes = models.ManyToManyField('Vote', blank=True)
+    buy_altogether = models.ManyToManyField('Product')
     subcats = models.ManyToManyField('Subcategory', blank=True)
     cats = models.ManyToManyField('Category', editable=False)
     in_stock = models.PositiveIntegerField(default=0)
@@ -306,7 +309,6 @@ class Product(PolymorphicModel):
         for p in self.properties:
             p_name = p.replace('_', ' ')
             props.update({f"{p_name}": getattr(self, p)})
-        print(props)
         return props
 
     def __str__(self):
