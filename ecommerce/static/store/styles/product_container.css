@@ -988,4 +988,59 @@ section {
       background-color: var(--orange-color);
       border-color: var(--orange-color); }
 
+.curtain {
+  position: relative;
+  margin: 0 auto;
+  width: 186px;
+  height: 32px;
+  overflow: hidden; }
+  .curtain__wrapper {
+    width: 100%;
+    height: 100%; }
+    .curtain__wrapper input[type=checkbox] {
+      position: absolute;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      opacity: 0;
+      top: 0;
+      left: 0; }
+      .curtain__wrapper input[type=checkbox]:checked ~ div.curtain__panel-left {
+        transform: translateX(0); }
+      .curtain__wrapper input[type=checkbox]:checked ~ div.curtain__panel-right {
+        transform: translateX(0); }
+  .curtain__panel {
+    display: flex;
+    align-items: center;
+    background: var(--orange-color);
+    color: var(--main-color);
+    float: left;
+    position: relative;
+    width: 50%;
+    height: 32px;
+    transition: all 1s ease-out;
+    z-index: 2; }
+    .curtain__panel-left {
+      justify-content: flex-end;
+      transform: translateX(-100%); }
+    .curtain__panel-right {
+      justify-content: flex-start;
+      transform: translateX(100%); }
+  .curtain__content {
+    align-items: center;
+    background: #333;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 32px;
+    justify-content: center;
+    padding: 1rem 0;
+    position: absolute;
+    text-align: center;
+    z-index: 1;
+    width: 186px; }
+    .curtain__content img {
+      width: 20%; }
+
 /*# sourceMappingURL=product_container.css.map */

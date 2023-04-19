@@ -83,7 +83,24 @@
                 <p><span>{{request.user.get_payment_price}}</span>$</p>
             </div>
             <div class="checkout">
-                <button type="button">Commit Purchase</button>
+                <div class="curtain">
+                    <div class="curtain__wrapper">
+                      <input type="checkbox" checked>
+                      
+                      <div class="curtain__panel curtain__panel-left">
+                        <h1>Purc</h1>
+                      </div> <!-- curtain__panel -->
+                      
+                      <div class="curtain__content">
+                        PayPal
+                      </div>
+                      
+                      <div class="curtain__panel curtain__panel-right">
+                        <h1>hase</h1>
+                      </div> <!-- curtain__panel -->
+                      
+                    </div> <!-- curtain__wrapper -->
+                  </div> <!-- curtain -->
             </div>
         </div>
     </section>
@@ -95,7 +112,7 @@
         " use non-strict "
         let csrf = new DOMParser().parseFromString(`{% csrf_token %}`, 'text/html').querySelector('input').value;
         let id = btn.parentElement.parentElement.querySelector('input[name="id"]').value;
-        const response = fetch(`/api/product/${id}/toggle-cart/`, { 
+        const response = fetch(`/api/product/${id}/toggle-{{container_name}}/`, { 
             method: "POST", 
             headers: { 'X-CSRFToken':  csrf, "Content-Type" : "application/json" },
             body: JSON.stringify({ 'action' : 'remove'}),
@@ -107,5 +124,8 @@
         span.textContent = (Number(span.textContent) - Number(btn.parentElement.parentElement.querySelector('.price').textContent)).toFixed(2);
         btn.parentElement.parentElement.remove();
     }
+{% if container_name == 'cart' %}
+    const 
+{% endif %}
 </script>
 {% endblock body %}
