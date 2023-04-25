@@ -267,6 +267,7 @@
         translate: -50% -50%; }
 
 .load {
+  z-index: 999999999999999999999;
   background-color: #061e5e2f;
   position: fixed;
   left: 0;

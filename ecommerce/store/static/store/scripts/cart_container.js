@@ -4,26 +4,19 @@ function getQuantity(productElement) {
 function getSKU(productElement) {
   return parseInt(productElement.querySelector('input[name="inStock"')?.value);
 }
-function getCart() {
-  let arr = [];
-  for (let productElement of document.querySelectorAll('.products > .product')) {
-    let quantity = getQuantity(productElement);
-    let sku = getSKU(productElement);
-  }
-}
 
 paypal.Buttons({
   style: {
-      layout: 'horizontal',
-      color: 'black',
-      shape: 'rect',
-      label: 'paypal',
-      height: 43,
-      borderRadius: 0
+    layout: 'horizontal',
+    color: 'black',
+    shape: 'rect',
+    label: 'paypal',
+    height: 43,
+    borderRadius: 0
   },
   // Order is created on the server and the order id is returned
   createOrder() {
-    return fetch("/my-server/create-paypal-order", {
+    return fetch("/api/orders/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +24,7 @@ paypal.Buttons({
       // use the "body" param to optionally pass additional order information
       // like product skus and quantities
       body: JSON.stringify({
-        cart: getCart(),
+        cart: undefined,
       }),
     })
       .then((response) => response.json())
@@ -39,7 +32,7 @@ paypal.Buttons({
   },
   // Finalize the transaction on the server after payer approval
   onApprove(data) {
-    return fetch("/my-server/capture-paypal-order", {
+    return fetch(`/api/orders/${data.orderID}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,5 +54,3 @@ paypal.Buttons({
       });
   }
 }).render('#paypal-button-container');
-
-setTimeout(()=>{document.querySelector('#paypal-button-container .paypal-button.paypal-button-shape-rect').style.borderRadius=0;})

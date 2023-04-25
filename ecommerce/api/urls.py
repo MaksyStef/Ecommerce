@@ -12,5 +12,6 @@ router.register(r'melee', views.MeleeProductView)
 router.register(r'souvenir', views.SouvenirProductView)
 router.register(r'flashlight', views.FlashlightProductView)
 router.register(r'accompanying', views.AccompanyingProductView)
+router.register(r'orders', views.OrderViewSet, basename='order')
 
 urlpatterns = router.urls

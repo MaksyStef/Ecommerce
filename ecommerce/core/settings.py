@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,3 +152,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 24
 }
+
+# Define Paypal
+PAYPAL_RETURN_URL = "/success/"
+PAYPAL_CANCEL_URL = "/cancel/"
+PAYPAL_CLIENT = PayPalHttpClient(SandboxEnvironment( # In real project Sandbox won't be working
+    client_id=os.environ.get('PAYPAL_CLIENT_ID'),
+    client_secret=os.environ.get('PAYPAL_CLIENT_SECRET')
+))

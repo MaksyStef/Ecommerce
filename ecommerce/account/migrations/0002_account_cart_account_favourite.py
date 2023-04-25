@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='cart',
-            field=models.OneToOneField(default=store.models.Cart.get_new, on_delete=django.db.models.deletion.CASCADE, to='store.cart', verbose_name='Products in cart'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='store.cart', verbose_name='Products in cart'),
         ),
         migrations.AddField(
             model_name='account',

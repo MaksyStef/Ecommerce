@@ -36,10 +36,10 @@ class Account(AbstractBaseUser, PermissionsMixin): # Sometimes need to remove Pe
 
 
     def get_cart_count(self):
-        return self.cart.products.all().count()
+        return self.cart.get_total()
 
     def get_favourite_count(self):
         return self.favourite.products.all().count()
 
     def get_payment_price(self):
-        return sum(self.cart.products.all().values_list('price', flat=True))
+        return self.cart.get_payment_price()

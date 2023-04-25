@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from store.models import Product, Category, Subcategory
+from store.models import Product, Category, Subcategory, Order
 from account.models import Account
 
 
@@ -60,7 +60,14 @@ class ProductSerializer(serializers.ModelSerializer):
         return obj.get_materials() if hasattr(obj, 'get_materials') else ''
 
     def _in_cart(self, obj):
-        return self.context['request'].user.cart.products.filter(pk=obj.pk).exists() if self.context['request'].user.is_authenticated else False
+        return obj in self.context['request'].user.cart.get_products() if self.context['request'].user.is_authenticated else False
 
     def _in_favourite(self, obj):
         return self.context['request'].user.favourite.products.filter(pk=obj.pk).exists() if self.context['request'].user.is_authenticated else False
+
+
+class OrderSerializer(serializers.Serializer):
+
+    class Meta:
+        model = Order
+        fields = "__all__"

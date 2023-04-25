@@ -151,7 +151,7 @@ class CartView(ProductContainerView):
         return {
             'container_name' : 'cart',
             'in_container' : self.request.user.get_cart_count(),
-            'products': self.request.user.cart.products.all(),
+            'products': self.request.user.cart.get_products(),
         }
 
 

@@ -29,6 +29,37 @@ class ABCModel(models.Model):
 
 
 # Models
+class Vote(models.Model):
+    """ User vote for a product. """
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        editable=False,
+        default=None,
+    )
+    value = models.FloatField(
+        editable=False,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+    )
+
+
+class Order(models.Model):
+    """ User order for a product. Has attributes of a product and amount. """
+    product = models.ForeignKey(to='Product', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_paid = models.BooleanField(default=False)
+    capture_id = models.CharField(max_length=255, blank=True, null=True)
+
+    def get_price(self):
+        """ Calculate the price of this order. """
+        return self.quantity * self.product.price
+
+
 class AbstractContainer(ABCModel):
     """ Abstract class to define the get_new container function for ForeignKey fields default. """
     @classmethod
@@ -50,31 +81,34 @@ class AbstractProductContainer(AbstractContainer):
             return "add", product
 
 
+class AbstractOrderContainer(AbstractContainer):
+    """ Abstract container for orders. """
+    orders = models.ManyToManyField('Order')
+    
+    def get_products(self):
+        return list(map(lambda order: order.product, self.orders.all()))
+    
+    def get_payment_price(self):
+        orders = self.orders.all()
+        return sum(map(lambda order: order.get_price(), orders))
+    
+    def get_total(self):
+        return len(self.get_products())
+
+    def toggle(self, product):
+        order, is_created = self.orders.get_or_create(product=product)
+        if not is_created:
+            order.delete()
+        return is_created, product if is_created else None
+
+
 class Favourite(AbstractProductContainer):
     """ Product container for saving products. """
     pass
 
 
-class Cart(AbstractProductContainer):
-    """ Product container for purchasing products. """
-    pass
-
- 
-class Vote(models.Model):
-    """ User vote for a product. """
-    user = models.ForeignKey(
-        to=User,
-        on_delete=models.CASCADE,
-        editable=False,
-        default=None,
-    )
-    value = models.FloatField(
-        editable=False,
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-    )
+class Cart(AbstractOrderContainer):
+    """ Order container for saving orders. """
 
 class AbstractCategory(ABCModel):
     """

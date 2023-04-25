@@ -94,7 +94,6 @@
                 
                 if (btn.classList.contains('toggled')) {
                     btn.innerHTML = `Remove from the cart <img src="{% static 'store/images/icons/cart-icon.svg' %}" alt="cart-icon">`;
-                    console.log(btn);
                     cartCounter.setAttribute('purchase-count', purchaseCount + 1);
                     purchaseSummary.textContent = (priceAmount + productPrice).toFixed(2);
                  } else { 

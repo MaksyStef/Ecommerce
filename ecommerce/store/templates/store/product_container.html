@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% sass_src 'store/styles/product_container.scss' %}">
 {% endblock extra_head %}
 {% block body %}
-<div class="wrapper column">
+<div class="wrapper column invisible">
     <!-- Header -->
     <header class="subheader column">
         <div class="row">
@@ -30,7 +30,7 @@
                 <div class="column_left row flex-center">
                     <div class="thumbnail row">
                         <a href="{{product.get_absolute_url}}" target="_blank">
-                            <img src="{{product.image_general.url}}" alt="Product image" />
+                            <img src="{% if product.image_general %}{{product.image_general.url}}{% else %}https://i.gifer.com/9IBr.gif{% endif %}" alt="Product image" />
                         </a>
                     </div>
                     <div class="detail column">

@@ -1,13 +1,16 @@
 from django.http import JsonResponse
+from django.conf import settings
 from django.shortcuts import render
 from django.db.models import Q
 from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from . import serializers
-from store.models import Product, Flashlight, Melee, Knife, Accompanying, Souvenir
+from store.models import Product, Flashlight, Melee, Knife, Accompanying, Souvenir, Order
 
 import json
+from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
+from paypalhttp import HttpError
 
 
 # Create your views here.
@@ -152,3 +155,77 @@ class FlashlightProductView(ProductViewSet):
 
 class AccompanyingProductView(ProductViewSet):
     queryset = Accompanying.objects.filter(sellable=True)
+
+
+class OrderViewSet(viewsets.ViewSet):
+    serializer_class = serializers.OrderSerializer
+
+    def create(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        cart, created = Cart.objects.get_or_create(user=user, completed=False)
+        items = []
+        for order in cart.orders.all():
+            product = order.product
+            items.append({
+                'name': product.name,
+                'unit_amount': {
+                    'currency_code': 'USD',
+                    'value': str(order.get_price())
+                },
+                'quantity': str(order.quantity),
+                'sku': str(product.id),
+            })
+
+        request = OrdersCreateRequest()
+        request.prefer('return=representation')
+        request.request_body({
+            "intent": "CAPTURE",
+            "purchase_units": [
+                {
+                    "amount": {
+                        "currency_code": "USD",
+                        "value": str(cart.get_total())
+                    },
+                    "items": items
+                }
+            ],
+            "application_context": {
+                "return_url": settings.PAYPAL_RETURN_URL,
+                "cancel_url": settings.PAYPAL_CANCEL_URL
+            }
+        })
+
+        try:
+            response = settings.PAYPAL_CLIENT.execute(request)
+            order_id = response.result.id
+            Order.objects.create(
+                paypal_order_id=order_id,
+                cart=cart
+            )
+            return Response({'order_id': order_id}, status=status.HTTP_201_CREATED)
+
+        except HttpError as e:
+            error_message = json.loads(e.message)
+            return Response({'error': error_message['message']}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'])
+    def capture_paypal_order(self, request, pk=None):
+        order = get_object_or_404(Order, pk=pk)
+
+        request = OrdersCaptureRequest(order.paypal_order_id)
+        request.prefer('return=representation')
+        try:
+            response = settings.PAYPAL_CLIENT.execute(request)
+            if response.result.status == 'COMPLETED':
+                order.capture_id = response.result.id
+                order.save()
+                return Response({'success': True})
+            else:
+                return Response({'error': 'Order was not completed.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except HttpError as e:
+            error_message = json.loads(e.message)
+            return Response({'error': error_message['message']}, status=status.HTTP_400_BAD_REQUEST)
