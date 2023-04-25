@@ -38,18 +38,18 @@
                         <div class="description">{{ product.description }}</div>
                         <div class="price-container"><span class="price">{{ product.price }}</span>$</div>
                         <input type="hidden" name="id" value="{{product.pk}}">
+                        <input type="hidden" name="inStock" value="{{product.in_stock}}">
                     </div>
                 </div>
 
                 <div class="column_right row flex-center">
                     <div class="quantity">
-                        <input type="number" class="quantity" step="1" value="1"  min="1" max="{{product.in_stock}}"/>
+                        <input type="number" class="quantity" step="1" value="1" min="1" max="{{product.in_stock}}" />
                     </div>
                     <button class="remove" onclick="removeFromContainer(this)">
-                        <svg version="1.1" class="close"
-                            xmlns="//www.w3.org/2000/svg" xmlns:xlink="//www.w3.org/1999/xlink" x="0px"
-                            y="0px" viewBox="0 0 60 60" enable-background="new 0 0 60 60"
-                            xml:space="preserve">
+                        <svg version="1.1" class="close" xmlns="//www.w3.org/2000/svg"
+                            xmlns:xlink="//www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 60 60"
+                            enable-background="new 0 0 60 60" xml:space="preserve">
                             <polygon
                                 points="38.936,23.561 36.814,21.439 30.562,27.691 24.311,21.439 22.189,23.561 28.441,29.812 22.189,36.064 24.311,38.186 30.562,31.934 36.814,38.186 38.936,36.064 32.684,29.812">
                             </polygon>
@@ -58,7 +58,9 @@
                 </div>
             </li>
             {% empty %}
-            <h1 class="products__empty">There is no any products yet, <a class="link" href="{% url 'store:products' %}">include some in</a><br><a class="link" href="{% url 'store:homepage' %}">Go Home</a></h1>
+            <h1 class="products__empty">There is no any products yet, <a class="link"
+                    href="{% url 'store:products' %}">include some in</a><br><a class="link"
+                    href="{% url 'store:homepage' %}">Go Home</a></h1>
             {% endfor %}
         </ul>
     </section>
@@ -72,7 +74,7 @@
         <div class="promotion column">
             <label for="promo-code">Have A Promo Code?</label>
             <div class="row">
-                <input placeholder="XXXX-XXXX-XXXX-XXXX" type="text" id="promo-code"/>
+                <input placeholder="XXXX-XXXX-XXXX-XXXX" type="text" id="promo-code" />
                 <button type="button"></button>
             </div>
         </div>
@@ -85,25 +87,22 @@
             <div class="checkout">
                 <div class="curtain">
                     <div class="curtain__wrapper">
-                      <input type="checkbox" checked>
-                      
-                      <div class="curtain__panel curtain__panel-left">
-                        <h1>Purc</h1>
-                      </div> <!-- curtain__panel -->
-                      
-                      <div class="curtain__content">
-                        PayPal
-                      </div>
-                      
-                      <div class="curtain__panel curtain__panel-right">
-                        <h1>hase</h1>
-                      </div> <!-- curtain__panel -->
-                      
-                    </div> <!-- curtain__wrapper -->
-                  </div> <!-- curtain -->
+                        <input type="checkbox" checked>
+                        <div class="curtain__panel curtain__panel-left">
+                            <h1>Purc</h1>
+                        </div>
+                        <div class="curtain__content" id="paypal-button-container">
+                        </div>
+                        <div class="curtain__panel curtain__panel-right">
+                            <h1>hase</h1>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+    <script src="https://www.paypal.com/sdk/js?client-id=AaxWEpI_8SlfpzmMGkzNgSyhRv2Joz30mBlxzrsLCf6-i8QWLoEaCcDPkIHbButwaOgBPr2tfG01bzw8&disable-funding=credit,card,giropay,sofort,sepa"></script>
+    <script src="{% static 'store/scripts/cart_container.js' %}"></script>
     <!-- End Summary -->
     {% endif %}
 </div>
@@ -112,20 +111,17 @@
         " use non-strict "
         let csrf = new DOMParser().parseFromString(`{% csrf_token %}`, 'text/html').querySelector('input').value;
         let id = btn.parentElement.parentElement.querySelector('input[name="id"]').value;
-        const response = fetch(`/api/product/${id}/toggle-{{container_name}}/`, { 
-            method: "POST", 
-            headers: { 'X-CSRFToken':  csrf, "Content-Type" : "application/json" },
-            body: JSON.stringify({ 'action' : 'remove'}),
+        const response = fetch(`/api/product/${id}/toggle-{{container_name}}/`, {
+            method: "POST",
+            headers: {'X-CSRFToken': csrf, "Content-Type": "application/json"},
+            body: JSON.stringify({'action': 'remove'}),
         })
         console.table(response);
         let span = document.querySelector('.in-container span');
         span.textContent = Number(span.textContent) - 1;
         span = document.querySelector('.total span'),
-        span.textContent = (Number(span.textContent) - Number(btn.parentElement.parentElement.querySelector('.price').textContent)).toFixed(2);
+            span.textContent = (Number(span.textContent) - Number(btn.parentElement.parentElement.querySelector('.price').textContent)).toFixed(2);
         btn.parentElement.parentElement.remove();
     }
-{% if container_name == 'cart' %}
-    const 
-{% endif %}
 </script>
 {% endblock body %}
