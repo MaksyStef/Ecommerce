@@ -119,14 +119,14 @@ export function appendProductCard(container, product) {
         // Fill card's parts
         cardId.setAttribute('value', product['id']);
         cardImage.parentElement.href = product['url'];
-        let imageSource = product['image_general'] ? product['image_general'] : 'https://i.gifer.com/9IBr.gif';
+        let imageSource = product['image_general'] ? product['image_general'] : '/static/store/images/icons/loading.gif';
         cardImage.setAttribute('src', imageSource); 
         cardTitle.innerText = product["title"];
         cardSize.innerText = product["size"];
         cardMaterials.innerText = product["materials"];
         product['personal_rating'] ? cardPersonalRating.value = product['personal_rating'] : null;
         cardRateCount.innerText = product["votes_count"] + " votes";
-        cardPrice.innerHTML = `<span>${product["price"]}</span>$`;
+        cardPrice.innerHTML = `<span>${product["price"]}</span>€`;
 
         let stars = cardRating.querySelectorAll('.rate');
         for (let [ind, star] of Object.entries(stars)) {

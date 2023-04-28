@@ -30,13 +30,13 @@
                 <div class="column_left row flex-center">
                     <div class="thumbnail row">
                         <a href="{{product.get_absolute_url}}" target="_blank">
-                            <img src="{% if product.image_general %}{{product.image_general.url}}{% else %}https://i.gifer.com/9IBr.gif{% endif %}" alt="Product image" />
+                            <img src="{% if product.image_general %}{{product.image_general.url}}{% else %}{% static 'store/images/icons/loading.gif' %}{% endif %}" alt="Product image" />
                         </a>
                     </div>
                     <div class="detail column">
                         <div class="name"><a href="{{product.get_absolute_url}}">{{ product.title }}</a></div>
                         <div class="description">{{ product.description }}</div>
-                        <div class="price-container"><span class="price">{{ product.price }}</span>$</div>
+                        <div class="price-container"><span class="price">{{ product.price }}</span>€</div>
                         <input type="hidden" name="id" value="{{product.pk}}">
                         <input type="hidden" name="inStock" value="{{product.in_stock}}">
                     </div>
@@ -82,26 +82,14 @@
         <div class="summary column">
             <div class="total row">
                 <h1>Total:</h1>
-                <p><span>{{request.user.get_payment_price}}</span>$</p>
+                <p><span>{{request.user.get_payment_price}}</span>€</p>
             </div>
             <div class="checkout">
-                <div class="curtain">
-                    <div class="curtain__wrapper">
-                        <input type="checkbox" checked>
-                        <div class="curtain__panel curtain__panel-left">
-                            <h1>Purc</h1>
-                        </div>
-                        <div class="curtain__content" id="paypal-button-container">
-                        </div>
-                        <div class="curtain__panel curtain__panel-right">
-                            <h1>hase</h1>
-                        </div>
-                    </div>
-                </div>
+                <div id="paypal-button-container"></div>
             </div>
         </div>
     </section>
-    <script src="https://www.paypal.com/sdk/js?client-id=AaxWEpI_8SlfpzmMGkzNgSyhRv2Joz30mBlxzrsLCf6-i8QWLoEaCcDPkIHbButwaOgBPr2tfG01bzw8&disable-funding=credit,card,giropay,sofort,sepa"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AaxWEpI_8SlfpzmMGkzNgSyhRv2Joz30mBlxzrsLCf6-i8QWLoEaCcDPkIHbButwaOgBPr2tfG01bzw8"></script>
     <script src="{% static 'store/scripts/cart_container.js' %}"></script>
     <!-- End Summary -->
     {% endif %}

@@ -97,9 +97,12 @@ class AbstractOrderContainer(AbstractContainer):
 
     def toggle(self, product):
         order, is_created = self.orders.get_or_create(product=product)
+        order.quantity = 1
         if not is_created:
             order.delete()
-        return is_created, product if is_created else None
+            return is_created
+        self.save()
+        return is_created
 
 
 class Favourite(AbstractProductContainer):
@@ -234,7 +237,7 @@ class Product(PolymorphicModel):
             MaxValueValidator(100),
         ]
     )
-    created_at = models.DateTimeField(auto_created=True)
+    created_at = models.DateTimeField(auto_created=True, blank=True, null=True)
     sellable = models.BooleanField(default=True)
     sold = models.PositiveIntegerField(default=0)
     bonus_points = models.PositiveIntegerField(editable=False, blank=True, null=True)

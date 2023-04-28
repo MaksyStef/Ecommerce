@@ -43,14 +43,14 @@
                     </div>
                     <div class="product__gallery column">
                         <div class="product__main-image row flex-center">
-                            <img src='{{product.get_images.image_general|default_if_none:"https://i.gifer.com/9IBr.gif"}}'
+                            <img src='{{product.get_images.image_general|default_if_none: {% static "store/images/icons/loading.gif" %}}}'
                                 data-index="1" />
                         </div>
                         <ul class="product__thumbnail-images row">
                             {% for key, value in product.get_images.items %}
                             <div class="thumbnail-image-container">
                                 <img class="thumbnail-image"
-                                    src="{% if value %}{{value}}{% else %}https://i.gifer.com/9IBr.gif{% endif %}"
+                                    src="{% if value %}{{value}}{% else %}{% static 'store/images/icons/loading.gif' %}{% endif %}"
                                     alt="{{key}}" data-index="{{forloop.counter}}">
                             </div>
                             {% endfor %}
@@ -141,7 +141,7 @@
                         <div class="action-container_4 action-container column">
                             <div class="action-row row">
                                 <div class="column_1 column">
-                                    <p class="product__price"><span></span>$</p>
+                                    <p class="product__price"><span></span>€</p>
                                     <div class="product__quantity">
                                         <button class="minus-btn" type="button" name="button">–</button>
                                         <input class="quantity-input" type="number" name="quantity" value="1" min="1">

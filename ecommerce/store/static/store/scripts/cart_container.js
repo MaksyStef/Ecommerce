@@ -1,56 +1,51 @@
-function getQuantity(productElement) {
-  return parseInt(productElement.querySelector('.quantity input[type="number"]')?.value);
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
 }
-function getSKU(productElement) {
-  return parseInt(productElement.querySelector('input[name="inStock"')?.value);
-}
+let csrf = getCookie('csrftoken');
 
+// Render the PayPal button
 paypal.Buttons({
-  style: {
-    layout: 'horizontal',
-    color: 'black',
-    shape: 'rect',
-    label: 'paypal',
-    height: 43,
-    borderRadius: 0
-  },
-  // Order is created on the server and the order id is returned
-  createOrder() {
-    return fetch("/api/orders/", {
-      method: "POST",
+  createOrder: function(data, actions) {
+    return fetch('/api/orders/create_payment/', {
+      method: 'put',
       headers: {
-        "Content-Type": "application/json",
-      },
-      // use the "body" param to optionally pass additional order information
-      // like product skus and quantities
-      body: JSON.stringify({
-        cart: undefined,
-      }),
-    })
-      .then((response) => response.json())
-      .then((order) => order.id);
+        'X-CSRFToken': csrf
+      }
+    }).then(function(res) {
+      return res.json();
+    }).then(function(data) {
+      return data.id;
+    });
   },
-  // Finalize the transaction on the server after payer approval
-  onApprove(data) {
-    return fetch(`/api/orders/${data.orderID}/`, {
-      method: "POST",
+  onApprove: function(data, actions) {
+    return fetch('/api/orders/execute_payment/', {
+      method: 'post',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf
       },
       body: JSON.stringify({
-        orderID: data.orderID
+        "order_id": data.orderID,
       })
-    })
-      .then((response) => response.json())
-      .then((orderData) => {
-        // Successful capture! For dev/demo purposes:
-        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-        const transaction = orderData.purchase_units[0].payments.captures[0];
-        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
-        // When ready to go live, remove the alert and show a success message within this page. For example:
-        // const element = document.getElementById('paypal-button-container');
-        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-        // Or go to another URL:  window.location.href = 'thank_you.html';
-      });
+    }).then(function(res) {
+      // Handle success
+    }).catch(function(err) {
+      // Handle errors
+    });
+  },
+  style: {
+    shape: 'rect',
   }
 }).render('#paypal-button-container');

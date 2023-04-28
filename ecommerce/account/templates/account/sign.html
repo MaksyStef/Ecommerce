@@ -19,6 +19,9 @@
                         <h1>Password</h1>
                         <input required placeholder="Password" type="password" name="password" id="passwordLogin">
                     </label>
+                    {% if login_error %}
+                        <span class="error">{{login_error}}</span>
+                    {% endif %}
                     <input type="submit" value="Login">
                 </form>
             </div>
@@ -35,6 +38,26 @@
                         <input tabindex="-1" required type="email" name="email" pattern="[A-Za-z0-9._+-]+@[A-Za-z0-9 -]+\.[a-z]{2,}" placeholder="example@gmail.com" id="email" />
                     </label>
                     <label class="column">
+                        <h1>First Name</h1>
+                        <input tabindex="-1" required placeholder="First Name" type="text" name="firstName" />
+                    </label>
+                    <label class="column">
+                        <h1>Second Name</h1>
+                        <input tabindex="-1" required placeholder="Second Name" type="text" name="secondName" />
+                    </label>
+                    <label class="column">
+                        <h1>City</h1>
+                        <input tabindex="-1" required placeholder="City" type="text" name="city" />
+                    </label>
+                    <label class="column">
+                        <h1>State</h1>
+                        <input tabindex="-1" required placeholder="State" type="text" name="state" />
+                    </label>
+                    <label class="column postal-code">
+                        <h1>Postal Code</h1>
+                        <input tabindex="-1" required placeholder="00000" type="text" name="postalCode" />
+                    </label>
+                    <label class="column">
                         <h1>Password</h1>
                         <input autocomplete="noautocomplete" tabindex="-1" required placeholder="Password" type="password" name="password" id="passwordRegister">
                     </label>
@@ -42,6 +65,9 @@
                         <h1>Confirm Password</h1>
                         <input autocomplete="noautocomplete" tabindex="-1" required placeholder="Password" type="password" name="confirmation">
                     </label>
+                    {% if register_error %}
+                        <span class="error">{{register_error}}</span>
+                    {% endif %}
                     <input type="submit" tabindex="-1" value="Register">
                 </form>
             </div>

@@ -59,7 +59,7 @@
                     <a href="{% url 'store:favourite' %}" class="pushable favourite-btn"></a>
                     <a href="{% url 'store:cart' %}" class="pushable cart-btn" purchase-count="{% if request.user.is_authenticated %}{{request.user.get_cart_count}}{% else %}0{% endif %}"></a>
                     <div class="column">
-                        <p class="summary"><span id="purchase-summary">{% if request.user.is_authenticated %}{{request.user.get_payment_price}}{% else %}0{% endif %}</span>$</p>
+                        <p class="summary"><span id="purchase-summary">{% if request.user.is_authenticated %}{{request.user.get_payment_price}}{% else %}0{% endif %}</span>€</p>
                         <a href="#" class="commiting">Commit purchase</a>
                     </div>
                 </li>

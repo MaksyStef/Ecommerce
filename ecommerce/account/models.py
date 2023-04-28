@@ -9,6 +9,11 @@ from .managers import AccountManager
 class Account(AbstractBaseUser, PermissionsMixin): # Sometimes need to remove PermissionsMixin, migrate and then put it back
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=254, unique=True)
+    first_name = models.CharField(max_length=99, unique=True)
+    last_name = models.CharField(max_length=99, unique=True)
+    city = models.CharField(max_length=99)
+    state = models.CharField(max_length=99)
+    postal_code = models.CharField(max_length=99)
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

@@ -384,6 +384,16 @@ body {
   z-index: 1;
   transition: 0.4s;
   transition-timing-function: ease-out; }
+  .page_2 .sign-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr); }
+    @media (max-width: 1024px) {
+      .page_2 .sign-form {
+        display: flex; } }
+  .page_2 .postal-code {
+    grid-area: 4 / 1 / 5 / 3;
+    margin: 0 auto 0 0; }
 
 .sign-form {
   position: absolute;
@@ -394,7 +404,6 @@ body {
   justify-content: flex-start;
   align-items: center;
   min-height: 26.25rem;
-  width: clamp(310px);
   border: 2px solid var(--orange-color);
   padding-bottom: calc( 84px + -79 * ((100vw - 320px) / 1600));
   padding-top: calc( 84px + -79 * ((100vw - 320px) / 1600));
@@ -415,7 +424,8 @@ body {
     width: calc( 280px + -200 * ((100vw - 320px) / 1600));
     padding: 0.5rem;
     cursor: pointer;
-    margin-top: auto; }
+    margin: auto auto 0 auto;
+    grid-column: 1 / -1; }
     .sign-form input[type="submit"]:focus, .sign-form input[type="submit"]:active, .sign-form input[type="submit"]:hover {
       background-color: var(--orange-color);
       color: #fff; }
@@ -426,6 +436,10 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh; }
+
+.error {
+  font-size: 0.875rem;
+  color: var(--orange-color); }
 
 .label_log, .label_reg {
   top: 0;
@@ -462,8 +476,13 @@ body {
   left: calc(5.5vw + 16px); }
   #toLogin img {
     transform: rotate(180deg); }
-
+  @media (max-width: 767px) {
+    #toLogin {
+      top: 5%; } }
 #toRegister {
   right: calc(5.5vw + 16px); }
+  @media (max-width: 767px) {
+    #toRegister {
+      top: 5%; } }
 
 /*# sourceMappingURL=sign.css.map */
