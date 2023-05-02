@@ -1,0 +1,176 @@
+// ================= Import styles =================
+@import './main.scss';
+
+
+// ================= Style page =================
+.content {
+    justify-content: flex-start;
+    padding: 8%;
+    @include adaptiv-value(gap, 18, 48, 3);
+}
+.face {
+    @include adaptiv-value(width, 280, 360, 3);
+    position: relative;
+
+    .face-container {
+        display: block;
+        position: absolute;
+        border-radius: inherit;
+        width: 100%;
+        height: 100%;
+        border: 4px solid var(--orange-color);
+        animation: face-container 5s ease-in-out 0s forwards;
+    }
+    .mouth {
+        position: absolute;
+        display: block;
+        width: 35%;
+        left: 50%;
+        bottom: 25%;
+        aspect-ratio: 5/3;
+        translate: -50% 0;
+        border-radius: 0% 0% 45% 45% / 0% 0% 60% 60% ;
+        border: 4px solid var(--orange-color);
+    }
+    .eyes {
+        position: absolute;
+        gap: 20%;
+        width: 100%;
+        aspect-ratio: 10/1;
+        top: 25%;
+        left: 0;
+
+        &__left, &__right {
+            position: relative;
+            width: 18%;
+            aspect-ratio: 1;
+            border: 4px solid var(--orange-color);
+            border-radius: 20%;
+        }
+        &__left {
+            animation: eye-blink 1.25s ease-in-out 1.25s forwards;
+        }
+        &__right {
+        }
+    }
+    .check-container {
+        display: block;
+        scale: 0;
+        position: absolute;
+        border-radius: inherit;
+        width: 100%;
+        height: 100%;
+        border: 4px solid var(--orange-color);
+        animation: check-container 3s ease-in-out 5.1s forwards;
+    }
+    .check{
+        --start-posX: -50%;
+        --start-posY: -55%;
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: var(--start-posX) var(--start-posY);
+        width: 50%;
+        aspect-ratio: 1;
+        stroke-width: 2;
+        stroke: var(--orange-color);
+        stroke-miterlimit: 10;
+        stroke-dashoffset: 0;
+        animation: shakeY 1s ease-in-out 1s infinite;
+        
+        
+        path {
+            translate: -10% -15%;
+        }
+    }
+}
+h1 {
+    color: var(--orange-color);
+    font-weight: 600;
+    font-size: rem(24);
+}
+p {
+    font-weight: 500;
+    font-size: rem(14);
+    color: rgba(#000, 0.5);
+    a {
+        color: rgba(#000, 0.55) !important;
+        font-size: 1.1em;
+    }
+}
+
+
+@keyframes face-container {
+    0% {
+        scale: 0;
+        rotate: -360deg;
+    }
+    15% {
+        scale: 1;
+        rotate: 14deg;
+    }
+    20% {
+        rotate: -8deg;
+    }
+    25% {
+        rotate: 4deg;
+    }
+    30% {
+        rotate: 0deg;
+    }
+    80% {
+        scale: 1;
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 360deg;
+        scale: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes eye-blink {
+    0% {
+        scale: 1;
+    }
+    40% {
+        scale: 0;
+    }
+    45%{
+        scale: 0;
+        border-left: 0;
+        border-top: 0;
+        border-radius: 10% 10% 20% 10% / 10% 10% 20% 10% ;
+    }
+    100% {
+        scale: 0.9;
+        border-left: 0;
+        border-top: 0;
+        border-radius: 10% 10% 20% 10% / 10% 10% 20% 10% ;
+    }
+}
+
+@keyframes check-container {
+    0% {
+        scale: 0;
+        rotate: -360deg;
+    }
+    15% {
+        scale: 1;
+        rotate: 14deg;
+    }
+    20% {
+        rotate: -8deg;
+    }
+    25% {
+        rotate: 4deg;
+    }
+    30% {
+        rotate: 0deg;
+    }
+    100% {
+        scale: 1;
+        rotate: 0deg;
+    }
+}

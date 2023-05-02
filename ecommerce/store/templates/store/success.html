@@ -1,0 +1,27 @@
+{% extends "store/base.html" %}
+{% load static sass_tags %}
+{% block title %}Payment Success{% endblock title %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% sass_src 'store/styles/success.scss' %}">
+    <meta http-equiv="refresh" content="7; url='/'" />
+{% endblock extra_head %}
+{% block body %}
+    <div class="wrapper">
+        <main class="content column flex-center">
+            <div class="face circle">
+                <div class="face-container">
+                    <div class="eyes row flex-center">
+                        <div class="eyes__left"></div>
+                        <div class="eyes__right"></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+                <div class="check-container">
+                    <svg class="check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+                </div>
+            </div>
+            <h1>Thank you very much for your sincere support!</h1>
+            <p>Soon you'll be automatically redirected to <a href="/" class="link">Homepage.</a></p>
+        </main>
+    </div>
+{% endblock %}

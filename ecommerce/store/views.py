@@ -166,3 +166,9 @@ class FavouriteView(ProductContainerView):
 
 
 # Function Based Views
+def success_view(request):
+    return render(request, 'store/success.html')
+
+def failure_view(request):
+    return render(request, 'store/failure.html')
+    
