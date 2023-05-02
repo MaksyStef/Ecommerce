@@ -93,7 +93,7 @@ class AbstractOrderContainer(AbstractContainer):
         return sum(map(lambda order: order.get_price(), orders))
     
     def get_total(self):
-        return len(self.get_products())
+        return sum([order.quantity for order in self.orders.all()])
 
     def toggle(self, product):
         order, is_created = self.orders.get_or_create(product=product)

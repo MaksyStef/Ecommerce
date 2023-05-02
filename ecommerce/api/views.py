@@ -3,6 +3,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.db.models import Q
 from rest_framework import viewsets, permissions, status, filters
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from . import serializers
@@ -160,23 +161,27 @@ class AccompanyingProductView(ProductViewSet):
 class OrderViewSet(viewsets.ViewSet):
     serializer_class = serializers.OrderSerializer
 
-    def create(self, request):
+    @action(
+        methods=['post', 'put', 'get'], detail=False, 
+        permission_classes=[permissions.IsAuthenticated],
+        authentication_classes=[SessionAuthentication],
+        url_path='create-paypal-order', url_name='create_paypal_order'
+    )
+    def create_paypal_order(self, request):
         user = request.user
-        if not user.is_authenticated:
-            return Response({'error': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        cart, created = Cart.objects.get_or_create(user=user, completed=False)
+        cart = user.cart
         items = []
         for order in cart.orders.all():
             product = order.product
             items.append({
-                'name': product.name,
+                'name': product.title,
+                'description': product.description,
+                'sku': str(product.id),
                 'unit_amount': {
-                    'currency_code': 'USD',
-                    'value': str(order.get_price())
+                    'currency_code': 'EUR',
+                    'value': str(product.price),
                 },
                 'quantity': str(order.quantity),
-                'sku': str(product.id),
             })
 
         request = OrdersCreateRequest()
@@ -186,8 +191,15 @@ class OrderViewSet(viewsets.ViewSet):
             "purchase_units": [
                 {
                     "amount": {
-                        "currency_code": "USD",
-                        "value": str(cart.get_total())
+                        "currency_code": "EUR",
+                        "value": str(cart.get_payment_price()),
+                        "breakdown": {
+                            "item_total": {
+                                "currency_code": "EUR",
+                                "value": str(cart.get_payment_price()),
+                            },
+                            # "discount": user.discount,
+                        }
                     },
                     "items": items
                 }
@@ -201,31 +213,37 @@ class OrderViewSet(viewsets.ViewSet):
         try:
             response = settings.PAYPAL_CLIENT.execute(request)
             order_id = response.result.id
-            Order.objects.create(
-                paypal_order_id=order_id,
-                cart=cart
-            )
             return Response({'order_id': order_id}, status=status.HTTP_201_CREATED)
 
         except HttpError as e:
             error_message = json.loads(e.message)
-            return Response({'error': error_message['message']}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error_message': error_message}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'])
-    def capture_paypal_order(self, request, pk=None):
-        order = get_object_or_404(Order, pk=pk)
-
-        request = OrdersCaptureRequest(order.paypal_order_id)
+    @action(
+        methods=['post', 'put', 'get'], detail=False, 
+        permission_classes=[permissions.IsAuthenticated], 
+        authentication_classes=[SessionAuthentication],
+        url_path='capture-paypal-order', url_name='capture_paypal_order'
+    )
+    def capture_paypal_order(self, request):
+        user = request.user
+        cart = user.cart
+        data = json.loads(request.body)
+        request = OrdersCaptureRequest(data.order_id)
         request.prefer('return=representation')
         try:
             response = settings.PAYPAL_CLIENT.execute(request)
             if response.result.status == 'COMPLETED':
-                order.capture_id = response.result.id
-                order.save()
+                cart.orders.all().update(order_id=response.result.id)
+                # user.history = user.history.all() | cart.orders.all()
+                # user.save()
+                cart.orders.all().remove()
                 return Response({'success': True})
             else:
                 return Response({'error': 'Order was not completed.'}, status=status.HTTP_400_BAD_REQUEST)
 
         except HttpError as e:
+            error_name    = json.loads(e.name)
             error_message = json.loads(e.message)
-            return Response({'error': error_message['message']}, status=status.HTTP_400_BAD_REQUEST)
+            error_details = json.loads(e.details)
+            return Response({'error_name': error_name, 'error_message': error_message['message'], 'details': error_details}, status=status.HTTP_400_BAD_REQUEST)

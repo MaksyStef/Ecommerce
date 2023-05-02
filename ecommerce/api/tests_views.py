@@ -7,7 +7,9 @@ from store.models import Product, Flashlight, Knife, Subcategory, Category
 from account.models import Account
 
 import json
-
+from rest_framework.test import APIClient
+from rest_framework import status
+from unittest.mock import patch
 
 # Create your tests here.
 class ProductViewSetTest(TestCase):
@@ -99,3 +101,49 @@ class ProductViewSetTest(TestCase):
         dummy_request.user = Account.objects.all().get()
         expected = serializers.ProductSerializer(Product.objects.filter(price__gte=14, price__lte=20), many=True, context={'request': dummy_request}).data
         self.assertEqual(expected, resp.json()['results'], f"\n\nExpected: {expected}\nResponse: {resp}")
+
+
+class OrderViewSetTest(TestCase):
+    def setUp(self):
+        p = Product.objects.create(
+                price=11.5,
+                discount=10,
+                sold=1,
+                title="Test Product",
+                description=f"Product number 1",
+                article=20,
+                in_stock=10,
+            )
+        self.client = APIClient()
+        self.user = Account.objects.create_user(
+            username='testuser',
+            password='password123',
+            email='testuser@example.com',
+            first_name='Test',
+            last_name='User',
+            city='Berlin',
+            state='Brandenburh',
+            postal_code='10315',
+        )
+        self.user.cart.toggle(p)
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_paypal_order(self):
+        url = reverse('api:order-create_paypal_order')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('order_id', response.data)
+
+    @patch('paypalrestsdk.Payment.find')
+    def test_capture_paypal_order(self, mock_payment_find):
+        order = Order.objects.create(
+            user=self.user,
+            is_paid=False,
+        )
+        url = reverse('order-capture-paypal-order', args=[order.id])
+        mock_payment_find.return_value = {'state': 'approved'}
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        order.refresh_from_db()
+        self.assertTrue(order.is_paid)
+        self.assertIsNotNone(order.capture_id)

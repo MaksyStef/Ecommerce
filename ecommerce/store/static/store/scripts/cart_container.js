@@ -18,31 +18,37 @@ let csrf = getCookie('csrftoken');
 // Render the PayPal button
 paypal.Buttons({
   createOrder: function(data, actions) {
-    return fetch('/api/orders/create_payment/', {
-      method: 'put',
+    return fetch('/api/orders/create-paypal-order/', {
+      method: 'GET',
       headers: {
-        'X-CSRFToken': csrf
+        "Content-Type": "application/json",
+        'X-CSRFToken': csrf,
+        'csrfmiddlewaretoken': csrf
       }
     }).then(function(res) {
       return res.json();
     }).then(function(data) {
-      return data.id;
+      return data.order_id;
     });
   },
   onApprove: function(data, actions) {
-    return fetch('/api/orders/execute_payment/', {
-      method: 'post',
+    return fetch('/api/orders/capture-paypal-order/', {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': csrf
+        'X-CSRFToken': csrf,
+        'csrfmiddlewaretoken': csrf
       },
       body: JSON.stringify({
         "order_id": data.orderID,
       })
     }).then(function(res) {
       // Handle success
+      location.href = '/success/'
     }).catch(function(err) {
       // Handle errors
+      console.log(err);
+      // location.href = '/failure/'
     });
   },
   style: {
