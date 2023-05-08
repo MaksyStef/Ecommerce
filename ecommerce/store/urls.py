@@ -14,5 +14,5 @@ urlpatterns = [
     path('favourite/', login_required(views.FavouriteView.as_view()), name='favourite'),
     path('newsletters/', views.NewslettersView.as_view(), name='newsletter'),
     path('success/', views.success_view, name='success'),
-    path('success/', views.failure_view, name='failure'),
+    path('failure/', views.failure_view, name='failure'),
 ]

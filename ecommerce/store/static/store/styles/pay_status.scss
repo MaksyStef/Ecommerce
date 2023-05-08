@@ -20,6 +20,37 @@
         height: 100%;
         border: 4px solid var(--orange-color);
         animation: face-container 5s ease-in-out 0s forwards;
+
+        &:has(.failure) {
+            .mouth {
+                animation: mouth-sad 1.25s ease-in-out 2.5s forwards;
+            }
+
+            & ~ .sign-container {
+                .sign {
+                    position: relative;
+
+                    &::before, &::after {
+                        content: '';
+                        position: absolute;
+                        display: block;
+                        left: 50%;
+                        top: 50%;
+                        translate: -50% -50%;
+                        border-radius: 8px;
+                        width: 100%;
+                        aspect-ratio: 32/1;
+                        background-color: var(--orange-color);
+                    }
+                    &::before {
+                        rotate: 45deg;
+                    }
+                    &::after {
+                        rotate: -45deg;
+                    }
+                }
+            }
+        }
     }
     .mouth {
         position: absolute;
@@ -48,12 +79,54 @@
             border-radius: 20%;
         }
         &__left {
-            animation: eye-blink 1.25s ease-in-out 1.25s forwards;
         }
         &__right {
         }
+        .success {
+            animation: eye-blink 1.25s ease-in-out 1.25s forwards;
+        }
+        .failure {
+            animation: eye-dead 1.25s ease-in-out 1.25s forwards;
+
+        }
+        .x-mark {
+            width: 100%;
+            &__left, &__right {
+                position: absolute;
+                top: 0;
+                scale: 0;
+                animation: eye-x-mark 1.25s ease-in-out 2.5s forwards;
+                width: 20%;
+                aspect-ratio: 1;
+
+                &::before, &::after {
+                    content: '';
+                    position: absolute;
+                    display: block;
+                    left: 50%;
+                    top: 50%;
+                    translate: -50% -50%;
+                    border-radius: 8px;
+                    width: 100%;
+                    aspect-ratio: 16/1;
+                    background-color: var(--orange-color);
+                }
+                &::before {
+                    rotate: 45deg;
+                }
+                &::after {
+                    rotate: -45deg;
+                }
+            }
+            &__left {
+                left: 20%;
+            }
+            &__right {
+                right: 20%;
+            }
+        }
     }
-    .check-container {
+    .sign-container {
         display: block;
         scale: 0;
         position: absolute;
@@ -61,9 +134,9 @@
         width: 100%;
         height: 100%;
         border: 4px solid var(--orange-color);
-        animation: check-container 3s ease-in-out 5.1s forwards;
+        animation: sign-container 3s ease-in-out 5.1s forwards;
     }
-    .check{
+    .sign {
         --start-posX: -50%;
         --start-posY: -55%;
         display: block;
@@ -151,7 +224,34 @@ p {
     }
 }
 
-@keyframes check-container {
+@keyframes eye-dead {
+    0% {
+        scale: 1;
+    }
+    100% {
+        scale: 0;
+    }
+}
+
+@keyframes eye-x-mark {
+    0% {
+        scale: 0;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+@keyframes mouth-sad {
+    0% {
+        scale: 1 1;
+    }
+    100% {
+        scale: -1 -1;
+    }
+}
+
+@keyframes sign-container {
     0% {
         scale: 0;
         rotate: -360deg;

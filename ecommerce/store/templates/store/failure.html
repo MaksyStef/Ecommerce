@@ -1,9 +1,9 @@
 {% extends "store/base.html" %}
 {% load static sass_tags %}
-{% block title %}Payment Success{% endblock title %}
+{% block title %}Payment Failure{% endblock title %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% sass_src 'store/styles/pay_status.scss' %}">
-    <meta http-equiv="refresh" content="7; url='{% url 'store:homepage' %}'" />
+    <meta http-equiv="refresh" content="7; url='{% url 'store:cart' %}'" />
 {% endblock extra_head %}
 {% block body %}
     <div class="wrapper">
@@ -11,17 +11,19 @@
             <div class="face circle">
                 <div class="face-container">
                     <div class="eyes row flex-center">
-                        <div class="eyes__left success"></div>
-                        <div class="eyes__right"></div>
+                        <div class="eyes__left failure"></div>
+                        <div class="eyes__right failure"></div>
+                        <div class="x-mark__left failure"></div>
+                        <div class="x-mark__right failure"></div>
                     </div>
                     <div class="mouth"></div>
                 </div>
                 <div class="sign-container">
-                    <svg class="sign" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+                    <div class="sign"></div>
                 </div>
             </div>
-            <h1>Thank you very much for your sincere support!</h1>
-            <p>Soon you'll be automatically redirected to <a href="{% url 'store:homepage' %}" class="link">Homepage.</a></p>
+            <h1>Something went wrong and payment ended up as a failure!</h1>
+            <p>Soon you'll be automatically redirected to <a href="{% url 'store:cart' %}" class="link">Cart.</a></p>
         </main>
     </div>
 {% endblock %}
