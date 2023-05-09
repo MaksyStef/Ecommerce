@@ -1,25 +1,10 @@
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie != '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-          var cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) == (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
-      }
-  }
-  return cookieValue;
-}
-let csrf = getCookie('csrftoken');
+const csrf = document.querySelector('input[name=csrfmiddlewaretoken]').value;
 
 // Render the PayPal button
 paypal.Buttons({
   createOrder: function(data, actions) {
     return fetch('/api/orders/create-paypal-order/', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
         'X-CSRFToken': csrf,
@@ -33,7 +18,7 @@ paypal.Buttons({
   },
   onApprove: function(data, actions) {
     return fetch('/api/orders/capture-paypal-order/', {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrf,
@@ -47,8 +32,7 @@ paypal.Buttons({
       location.href = '/success/'
     }).catch(function(err) {
       // Handle errors
-      console.log(err);
-      // location.href = '/failure/'
+      location.href = '/failure/'
     });
   },
   style: {

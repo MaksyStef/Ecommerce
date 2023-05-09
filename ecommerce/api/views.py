@@ -228,16 +228,15 @@ class OrderViewSet(viewsets.ViewSet):
     def capture_paypal_order(self, request):
         user = request.user
         cart = user.cart
-        data = json.loads(request.body)
-        request = OrdersCaptureRequest(data.order_id)
+        data = request.data
+        request = OrdersCaptureRequest(data['order_id'])
         request.prefer('return=representation')
         try:
             response = settings.PAYPAL_CLIENT.execute(request)
             if response.result.status == 'COMPLETED':
-                cart.orders.all().update(order_id=response.result.id)
+                cart.orders.all().update(capture_id=response.result.id)
                 # user.history = user.history.all() | cart.orders.all()
-                # user.save()
-                cart.orders.all().remove()
+                cart.orders.clear()
                 return Response({'success': True})
             else:
                 return Response({'error': 'Order was not completed.'}, status=status.HTTP_400_BAD_REQUEST)
