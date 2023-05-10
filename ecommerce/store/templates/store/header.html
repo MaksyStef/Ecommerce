@@ -41,7 +41,6 @@
                     list="product-search-suggestions"
                 />
                 <datalist id="product-search-suggestions">
-                    <option value="hey" for="search-products">hey</option>
                 </datalist>
             </label>
         </div>
@@ -98,3 +97,12 @@
         </ul>
     </section>
 </header>
+<script>
+    const searchInput = document.querySelector('#search-products');
+    searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            window.location.href = location.protocol+"//"+location.host+"/search/"+searchInput.value;
+        }
+    });
+    
+</script>
