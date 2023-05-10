@@ -136,9 +136,18 @@ class ProductView(DetailView):
         return context
 
 
-class SearchView(ListView):
-    pass
+class SearchProductView(ProductsView):
+
+    def get(self, request, query_string, *args, **kwargs):
+        self.query_string = query_string
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["api_url"] = context["api_url"] + "search/" + self.query_string
+        return context
     
+
 
 class ProductContainerView(TemplateView, ContextMixin):
     """ Anscestor for the views ment to show products in a product container such as Cart or Favourite. """

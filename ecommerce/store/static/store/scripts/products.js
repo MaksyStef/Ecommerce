@@ -20,6 +20,7 @@ function updatePage() {
     fetch(apiUrl.toString())
     .then(res => res.json())
     .then(data => {
+            console.log(data);
             totalItemsCount = data.count;
             const products = data.results;
             const productList = document.querySelector('.products-list');

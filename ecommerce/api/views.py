@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from . import serializers
 from store.models import Product, Flashlight, Melee, Knife, Accompanying, Souvenir, Order
 
+from fuzzywuzzy import fuzz
 import json
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 from paypalhttp import HttpError
@@ -136,6 +137,21 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = self.get_object()
         result, product = request.user.cart.toggle(product)
         return Response()
+    
+    @action(detail=False, methods=['GET'], url_path='search/(?P<query_string>(.*?))', url_name='search')
+    def search(self, request, query_string, *args, **kwargs):
+        products = self.get_queryset()
+        products_with_similarity = []
+
+        for product in products:
+            similarity_ratio = fuzz.ratio(query_string, product.title)
+            products_with_similarity.append((product, similarity_ratio))
+
+        sorted_products = sorted(products_with_similarity, key=lambda x: x[1], reverse=True)
+        sorted_products = [product for product, _ in sorted_products]
+
+        serializer = self.serializer_class(sorted_products, many=True, context={'request': request})
+        return Response({'results': serializer.data, 'count': len(serializer.data)})
 
 
 class KnifeProductView(ProductViewSet):
