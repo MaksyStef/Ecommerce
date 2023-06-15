@@ -74,9 +74,13 @@
     <div class="slider-pagination"></div>
 </template>
 <script>
+    const isAuthenticated = {{request.user.is_authenticated|lower}};
     const toggleCart = async toggler => {
         var id = toggler.parentElement.parentElement.querySelector('.product-card__id').value;
-        if (id != '') {  
+        if (isAuthenticated === false) {
+            location.href = `{% url 'account:sign' %}?next=${location.href}`
+        }
+        else if (id != '') {  
             let csrf = new DOMParser().parseFromString(`{% csrf_token %}`, 'text/html').querySelector('input').value;
             await fetch(`/api/product/${id}/toggle-cart/`, { 
                 method: "PUT", 
@@ -106,7 +110,10 @@
     }
     const toggleFavourite = async toggler => {
         let id = toggler.parentElement.parentElement.parentElement.parentElement.querySelector('.product-card__id').value;
-        if (id != '') {  
+        if (isAuthenticated === false) {
+            location.href = `{% url 'account:sign' %}?next=${location.href}`
+        }
+        else if (id != '') {  
             let csrf = new DOMParser().parseFromString(`{% csrf_token %}`, 'text/html').querySelector('input').value;
             await fetch(`/api/product/${id}/toggle-favourite/`, { 
                 method: "PUT", 

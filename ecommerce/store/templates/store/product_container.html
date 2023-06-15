@@ -105,12 +105,19 @@
             headers: {'X-CSRFToken': csrf, "Content-Type": "application/json"},
             body: JSON.stringify({'action': 'remove'}),
         })
-        console.table(response);
         let span = document.querySelector('.in-container span');
         span.textContent = Number(span.textContent) - 1;
         span = document.querySelector('.total span'),
             span.textContent = (Number(span.textContent) - Number(btn.parentElement.parentElement.querySelector('.price').textContent)).toFixed(2);
         btn.parentElement.parentElement.remove();
+        {% if container_name == 'cart' %}
+        if (document.querySelector('.products').children.length === 0) {
+            let container = document.querySelector('#paypal-button-container');
+            console.log(container);
+            container.style.opacity = 0.75;
+            container.style.pointerEvents = 'none';
+        }
+        {% endif %}
     }
 </script>
 {% endblock body %}

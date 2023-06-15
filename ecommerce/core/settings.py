@@ -122,7 +122,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 

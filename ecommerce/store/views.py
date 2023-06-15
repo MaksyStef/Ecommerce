@@ -79,7 +79,7 @@ class CertainProductsView(ProductsView):
         subs = list(filter(lambda cls: slugify(cls.__name__) == product_type, Product.__subclasses__())) # See if product_type is in list of Product child subclasses
         self.model = subs[0] if len(subs) > 0 else None
         if not self.model: # Raise 404 if product_type not found
-            raise HttpResponse(status=404)
+            return HttpResponse(status=404)
         return super().get(request, *args, **kwargs)
     
     def get_range_filters(self):
@@ -87,7 +87,7 @@ class CertainProductsView(ProductsView):
         field_dicts = []
         forbidden_field_names = ['rating', 'in_stock', 'sold', 'bonus_points']
         for field in model_fields:
-            if isinstance(field, PositiveIntegerField) and field.name not in forbidden_field_names:
+            if isinstance(field, PositiveIntegerField) and field.name not in forbidden_field_names and self.model.objects.all().count() > 0:
                 max_value = getattr(self.model.objects.all().order_by('-'+field.name)[0], field.name)
                 min_value = getattr(self.model.objects.all().order_by(field.name)[0], field.name)
                 field_dict = {
@@ -127,7 +127,7 @@ class ProductView(DetailView):
             },
             'personal_rating': int(object.votes.filter(user=self.request.user)[0].value) if object.votes.filter(user=self.request.user) else None,
             'in_fav': self.request.user.favourite.products.filter(id=object.id).exists() if self.request.user.is_authenticated else None,
-            'in_cart': self.request.user.cart.products.filter(id=object.id).exists() if self.request.user.is_authenticated else None,
+            'in_cart': self.request.user.cart.get_products().filter(id=object.id).exists() if self.request.user.is_authenticated else None,
             'manufacturer': object.subcats.get(cat__title="manufacturer") if object.cats.filter(title="manufacturer").exists() else None,
             'series': object.subcats.get(cat__title="series") if object.cats.filter(title="series").exists() else None,
             'cats': list(map(lambda cat: (cat.title, cat.get_subcats(subcats=subcats)), cats)),
@@ -148,7 +148,6 @@ class SearchProductView(ProductsView):
         return context
     
 
-
 class ProductContainerView(TemplateView, ContextMixin):
     """ Anscestor for the views ment to show products in a product container such as Cart or Favourite. """
     template_name = 'store/product_container.html'
@@ -159,8 +158,8 @@ class CartView(ProductContainerView):
     def get_context_data(self):
         return {
             'container_name' : 'cart',
-            'in_container' : self.request.user.get_cart_count(),
-            'products': self.request.user.cart.get_products(),
+            'in_container' : self.request.user.get_cart_count() if self.request.user.is_authenticated else False,
+            'products': self.request.user.cart.get_products() if self.request.user.is_authenticated else None,
         }
 
 
@@ -169,8 +168,8 @@ class FavouriteView(ProductContainerView):
     def get_context_data(self):
         return {
             'container_name' : 'favourite',
-            'in_container' : self.request.user.get_favourite_count(),
-            'products': self.request.user.favourite.products.all(),
+            'in_container' : self.request.user.get_favourite_count() if self.request.user.is_authenticated else False,
+            'products': self.request.user.favourite.products.all() if self.request.user.is_authenticated else None,
         }
 
 

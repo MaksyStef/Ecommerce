@@ -20,7 +20,6 @@ function updatePage() {
     fetch(apiUrl.toString())
     .then(res => res.json())
     .then(data => {
-            console.log(data);
             totalItemsCount = data.count;
             const products = data.results;
             const productList = document.querySelector('.products-list');
@@ -190,7 +189,7 @@ filterButton.onclick = e => {
             changed = true;
         }
     }
-    if (changed===true) { apiParams.set('exclude_subcat', String(excludeSubcats)) };
+    if (changed===true) { apiParams.set('exclude_subcats', String(excludeSubcats)) };
 
     // Filter rating
     changed = false;
@@ -203,6 +202,7 @@ filterButton.onclick = e => {
     }
     if (changed===true) { apiParams.set('exclude_rating', String(excludeRating)) };
     updatePage();
+    document.querySelector('.content-container').scrollIntoView({behavior:"smooth"});
 }
 
 
@@ -211,5 +211,4 @@ const orderButton = document.querySelector('#ordering');
 orderButton.addEventListener('focusout', e => {
     apiParams.set('ordering', orderButton.value);
     updatePage();
-    console.log(apiParams.toString());
 })

@@ -71,12 +71,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     def exclude_filter(self, param, queryset):
         field_name = param['field_name'].replace("exclude_", "")
         filter_kwargs = {
-            f"{field_name}_pk__in": param['exclude_list'],
+            f"{field_name}__in": param['exclude_list'],
         }
-        if field_name == "rating":
-            filter_kwargs = {
-                f"{field_name}__in": param['exclude_list'],
-            }
         return queryset.exclude(**filter_kwargs) # same to qst.filter(field__in=exclude_list)
 
 
@@ -122,21 +118,21 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = self.get_object()
         val = json.loads(request.body).get('value')
         product.rate(int(val), request.user)
-        return Response()
+        return Response({"result": "success", "value": val})
 
     @action(methods=['post', 'put', 'delete'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='toggle-favourite', url_name='toggle_favourite')
     def toggle_favourite(self, request, *args, **kwargs):
         product = self.get_object()
         result, product = request.user.favourite.toggle(product)
-        return Response()
+        return Response({'result': result, 'product_pk': product.pk if product else None})
 
     @action(methods=['post', 'put', 'delete'], detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='toggle-cart', url_name='toggle_cart')
     def toggle_cart(self, request, *args, **kwargs):
         product = self.get_object()
-        result, product = request.user.cart.toggle(product)
-        return Response()
+        result, order = request.user.cart.toggle(product)
+        return Response({'result': result, 'order_pk': order.pk if order else None})
     
     @action(detail=False, methods=['GET'], url_path='search/(?P<query_string>(.*?))', url_name='search')
     def search(self, request, query_string, *args, **kwargs):
@@ -148,7 +144,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             products_with_similarity.append((product, similarity_ratio))
 
         sorted_products = sorted(products_with_similarity, key=lambda x: x[1], reverse=True)
-        sorted_products = [product for product, _ in sorted_products]
+        sorted_products = [product for product, similarity in sorted_products if similarity > 65]
 
         serializer = self.serializer_class(sorted_products, many=True, context={'request': request})
         return Response({'results': serializer.data, 'count': len(serializer.data)})
@@ -190,7 +186,7 @@ class OrderViewSet(viewsets.ViewSet):
         for order in cart.orders.all():
             product = order.product
             items.append({
-                'name': product.title,
+                'name': f"{product.title} {product.get_article()}",
                 'description': product.description,
                 'sku': str(product.id),
                 'unit_amount': {
@@ -250,7 +246,7 @@ class OrderViewSet(viewsets.ViewSet):
         try:
             response = settings.PAYPAL_CLIENT.execute(request)
             if response.result.status == 'COMPLETED':
-                cart.orders.all().update(capture_id=response.result.id)
+                cart.orders.all().update(capture_id=response.result.id, is_paid=True)
                 # user.history = user.history.all() | cart.orders.all()
                 cart.orders.clear()
                 return Response({'success': True})

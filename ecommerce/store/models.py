@@ -65,14 +65,19 @@ class AbstractContainer(ABCModel):
     @classmethod
     def get_new(cls):
         return cls.objects.create().id
-
+    
+    @abstractmethod
+    def toggle(self, obj):
+        """ Toggle object presence in the container. If object was already present, remove it and return None. Else, add it and return object. """
+        return None
 
 
 class AbstractProductContainer(AbstractContainer):
     """ Abstract container for products. """
     products = models.ManyToManyField('Product')
 
-    def toggle(self, product):
+    def toggle(self, product) -> tuple[str, ...]:
+        """ Toggles product. Returns a touple of if added or removed and product or None. """
         if self.products.filter(pk=product.pk).exists():
             self.products.remove(product)
             return "remove", None
@@ -80,13 +85,25 @@ class AbstractProductContainer(AbstractContainer):
             self.products.add(product)
             return "add", product
 
+    def bulk_toggle(self, *products) -> tuple[list, list]:
+        """ Toggles many products. Returns a touple of added and removed products. """
+        added, removed = [], []
+        for product in products:
+            if self.products.filter(pk=product.pk).exists():
+                self.products.remove(product)
+                removed.append(product)
+            else:
+                self.products.add(product)
+                added.append(product)
+        return (added, removed)
 
 class AbstractOrderContainer(AbstractContainer):
     """ Abstract container for orders. """
     orders = models.ManyToManyField('Order')
     
     def get_products(self):
-        return list(map(lambda order: order.product, self.orders.all()))
+        ids = list(map(lambda order: order.product.id, self.orders.all()))
+        return Product.objects.filter(id__in=ids)
     
     def get_payment_price(self):
         orders = self.orders.all()
@@ -100,9 +117,22 @@ class AbstractOrderContainer(AbstractContainer):
         order.quantity = 1
         if not is_created:
             order.delete()
-            return is_created
+            return "remove", None
         self.save()
-        return is_created
+        return "add", order
+    
+    def bulk_toggle(self, *products) -> tuple[list, list]:
+        """ Toggles many products. Returns a touple of added and removed products. """
+        added, removed = [], []
+        for product in products:
+            order, is_created = self.orders.get_or_create(product=product)
+            order.quantity = 1
+            if not is_created:
+                order.delete()
+                removed.append(product)
+            added.append(product)
+            self.save()
+        return (added, removed)
 
 
 class Favourite(AbstractProductContainer):
@@ -112,6 +142,7 @@ class Favourite(AbstractProductContainer):
 
 class Cart(AbstractOrderContainer):
     """ Order container for saving orders. """
+
 
 class AbstractCategory(ABCModel):
     """
@@ -131,8 +162,16 @@ class AbstractCategory(ABCModel):
     class Meta:
         ordering = ['created_at']
 
+    @abstractmethod
+    def get_products(self, model='Product', queryset=None):
+        """ Returns QuerySet of products in queryset that have relationship with the category object. """
+        model = globals().get(model)
+        if not queryset:
+            queryset = model.objects.all()
+        return queryset.filter()
+
     def save(self, *args, **kwargs):
-        """ Create slug, created_at and saves object """
+        """ Create slug, created_at and save object """
         if not self.id:
             created_at = timezone.now()
         self.slug = slugify(self.title)
@@ -368,7 +407,7 @@ class ProductChildMixin:
     """
     @classmethod
     def get_absolute_url_to_type(model):
-        return f"{reverse('store:products')}{slugify(model.__name__)}/" # returns url like: /products/class-slug/
+        return reverse('store:certain', kwargs={'product_type': slugify(model.__name__)}) # returns url like: /products
 
 
 class Knife(Product, ProductChildMixin):
@@ -466,7 +505,6 @@ class Melee(Product, ProductChildMixin):
 
     def get_size(self):
         return f"{self.total_length}x{self.edge_width} ({self.edge_thickness})"
-
 
 class Souvenir(Product, ProductChildMixin):
     """

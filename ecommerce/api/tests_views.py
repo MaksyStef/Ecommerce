@@ -1,111 +1,105 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.http import HttpRequest
 from django.urls import reverse
-from django.contrib.auth import authenticate
-from . import serializers
-from store.models import Product, Flashlight, Knife, Subcategory, Category
-from account.models import Account
-
-import json
-from rest_framework.test import APIClient
+from django.contrib.auth import get_user_model
 from rest_framework import status
-from unittest.mock import patch
+from rest_framework.test import APIClient
+from store.models import Product
+from unittest.mock import patch, MagicMock
+from .serializers import ProductSerializer
+from store.models import Order
 
-# Create your tests here.
-class ProductViewSetTest(TestCase):
-    
+User = get_user_model()
+
+
+class ProductViewSetTestCase(TestCase):
     def setUp(self):
-        u = Account.objects.create_user(username="testUser A", email="testemail@gmail.com", password="testPassword123")
-        p = Product.objects.create(
+        self.client = APIClient()
+        self.product = Product.objects.create(
             price = 100,
             discount = 0,
             sellable = True,
             sold = 1,
             title = 'Product A',
             description = 'Product A description',
-            article = 1,
+            article = 10,
             in_stock = 10,
         )
-        p.rate(4, u)
-        self.client = Client()
 
-    def testToggle(self):
-        c = self.client
-        u = Account.objects.all()[0]
-        c.login(username="testUser A", password="testPassword123")
-        p = Product.objects.all()[0]
-        url = reverse('api:product-toggle_cart', None, [p.pk])
-        resp = c.post(url, secure=False)
-        self.assertEqual(resp.status_code, 200, f'Error code: {resp.status_code}')
-        self.assertTrue(u.cart.products.all().contains(p), f"Cart contains: {u.cart.products.all()}, must cantain Product A")
-        resp = c.post(url, secure=False)
-        self.assertFalse(u.cart.products.all().contains(p), f"Cart contains: {u.cart.products.all()}, must be empty")
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpassword',
+            first_name='John',
+            last_name='Doe',
+            city='New York',
+            state='NY',
+            postal_code='12345',
+        )
+        self.client.force_authenticate(user=self.user)
 
-    def testChildViewSet(self):
-        c = self.client
-        Flashlight.objects.create(
+    def test_get_suggestions(self):
+        url = reverse('api:product-suggestions', args=[self.product.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_buy_altogether(self):
+        url = reverse('api:product-buy_altogether', args=[self.product.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_rate_product(self):
+        url = reverse('api:product-rate', args=[self.product.id])
+        data = {'value': 5}
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['result'], 'success')
+        self.assertEqual(response.data['value'], 5)
+
+    def test_toggle_favourite(self):
+        url = reverse('api:product-toggle_favourite', args=[self.product.id])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['result'], 'add')
+        self.assertEqual(response.data['product_pk'], 1)
+        response = self.client.post(url)
+        self.assertEqual(response.data['result'], 'remove')
+        self.assertEqual(response.data['product_pk'], None)
+
+    def test_toggle_cart(self):
+        url = reverse('api:product-toggle_cart', args=[self.product.id])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['result'], 'add')
+        self.assertEqual(response.data['order_pk'], 1)
+        response = self.client.post(url)
+        self.assertEqual(response.data['result'], 'remove')
+        self.assertEqual(response.data['order_pk'], None)
+
+    def test_search(self):
+        test_product = Product.objects.create(
             price = 100,
             discount = 0,
             sellable = True,
             sold = 1,
-            title = 'Product B',
-            description = 'Product B description',
-            article = 1,
+            title = 'Similar Product Name',
+            description = 'Similar description',
+            article = 10,
             in_stock = 10,
-
-            power = 100,
-            battery_capacity = 10,
-            width = 10,
-            length = 10,
-            thickness = 10,
-            materials = "Material A"
         )
-        resp_f = c.get('/api/flashlight/').json()['results']
-        resp_p = c.get('/api/product/').json()['results']
-        self.assertTrue(resp_f != resp_p)
-
-    def testQueryRequests(self):
-        for num in range(5):
-            Category.objects.create(title=f"Cat{num}")
-            Product.objects.create(
-                price=11.5+num,
-                discount=10 if num % 3 == 0 else 0,
-                sold=num,
-                title=f"Cat{num}",
-                description=f"Product number {num}",
-                article=num**num,
-                in_stock=10*num,
-            )
-        for cat in Category.objects.all():
-            for num in range(5):
-                s = Subcategory.objects.create(
-                    title=f"Subcar{num} {cat.title}",
-                    cat=cat,
-                )
-        
-        for index, product in enumerate(Product.objects.all()):
-            if index % 2:
-                product.subcats.add(Subcategory.objects.all()[index])
-
-        c = self.client
-
-        resp = c.get('/api/product/?price_gap=14_20')
-        dummy_request = HttpRequest()
-        dummy_request.method = 'GET'
-        dummy_request.path = '/'
-        dummy_request.META['SERVER_NAME'] = 'localhost'
-        dummy_request.META['SERVER_PORT'] = '8000'
-        dummy_request.META['HTTP_AUTHORIZATION'] = 'Bearer your_token_here'
-        dummy_request.META['HTTP_ACCEPT'] = 'application/json'
-        dummy_request.META['CONTENT_TYPE'] = 'application/json'
-        dummy_request.user = Account.objects.all().get()
-        expected = serializers.ProductSerializer(Product.objects.filter(price__gte=14, price__lte=20), many=True, context={'request': dummy_request}).data
-        self.assertEqual(expected, resp.json()['results'], f"\n\nExpected: {expected}\nResponse: {resp}")
+        query_string = 'Similar Name'
+        url = reverse('api:product-search', kwargs={'query_string': query_string})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        request = HttpRequest()
+        request.user = self.user
+        serializer = ProductSerializer([test_product,], many=True, context={'request': request})
+        self.assertEqual(serializer.data, response.data['results'])
 
 
-class OrderViewSetTest(TestCase):
+class OrderViewSetTestCase(TestCase):
     def setUp(self):
-        p = Product.objects.create(
+        self.product = Product.objects.create(
                 price=11.5,
                 discount=10,
                 sold=1,
@@ -115,7 +109,7 @@ class OrderViewSetTest(TestCase):
                 in_stock=10,
             )
         self.client = APIClient()
-        self.user = Account.objects.create_user(
+        self.user = User.objects.create_user(
             username='testuser',
             password='password123',
             email='testuser@example.com',
@@ -125,7 +119,7 @@ class OrderViewSetTest(TestCase):
             state='Brandenburh',
             postal_code='10315',
         )
-        self.user.cart.toggle(p)
+        self.user.cart.toggle(self.product)
         self.client.force_authenticate(user=self.user)
 
     def test_create_paypal_order(self):
@@ -134,16 +128,20 @@ class OrderViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('order_id', response.data)
 
-    @patch('paypalrestsdk.Payment.find')
-    def test_capture_paypal_order(self, mock_payment_find):
-        order = Order.objects.create(
-            user=self.user,
-            is_paid=False,
-        )
-        url = reverse('order-capture-paypal-order', args=[order.id])
-        mock_payment_find.return_value = {'state': 'approved'}
-        response = self.client.post(url)
+    @patch('core.settings.PAYPAL_CLIENT.execute')
+    def test_capture_paypal_order(self, mock_execute):
+        order = self.user.cart.orders.first()
+        url = reverse('api:order-capture_paypal_order')
+
+        # Mock the execute method to return a response with the completed status
+        mock_response = MagicMock()
+        mock_response.result.status = 'COMPLETED'
+        mock_response.result.id = '123456789'
+        mock_execute.return_value = mock_response
+
+        response = self.client.post(url, {'order_id': 'dummy_order_id'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         order.refresh_from_db()
         self.assertTrue(order.is_paid)
-        self.assertIsNotNone(order.capture_id)
+        self.assertEqual(order.capture_id, '123456789')

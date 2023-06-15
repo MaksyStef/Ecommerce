@@ -27,6 +27,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'discount',
             'description',
             'article',
+            'bonus_points',
             'rating',
             'personal_rating',
             'image_general',

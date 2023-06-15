@@ -1,4 +1,4 @@
-export const authenticated = JSON.parse(document.querySelector("#authenticated")?.textContent);
+export const isAuthenticated= JSON.parse(document.querySelector("#authenticated")?.textContent);
 export const changeStar = (image, type = 'fill') => {
     let path = '/static/store/images/icons/';
     switch (type) {
@@ -57,7 +57,7 @@ export const setStars = (rating, cardRating) => {
     }
 }
 export const rate = async (rating, cardRating, cardId) => {
-    if (authenticated === true) {
+    if (isAuthenticated=== true) {
         function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie != '') {
@@ -85,19 +85,22 @@ export const rate = async (rating, cardRating, cardId) => {
                 "value": rating,
             }),
         });
-        let personalRating = cardId.parentElement.querySelector('.product-card__personal-rating'),
-            rateCount = cardId.parentElement.querySelector('.product-card__rate-count');
-        if (cardId.parentNode.contains(personalRating) === true) {
-            personalRating.value = rating
-        } else {
+        var personalRating = cardId.parentElement.querySelector('.product-card__personal-rating'), 
+            rateCount = cardId.parentElement.querySelector('.product-card__rate-count span');
+        (personalRating.value!=='') ? function () {
+            personalRating.value = rating;
+        }() : function () {
+            personalRating.remove();
             personalRating = document.createElement('input')
             personalRating.type = 'hidden';
-            personalRating.value = rating;
+            personalRating.setAttribute('value', rating);
             personalRating.classList.add('product-card__personal-rating');
             cardId.parentNode.appendChild(personalRating);
             rateCount.textContent = Number(rateCount.textContent) + 1;
-        }
+        }();
         setStars(rating, cardRating);
+    } else {
+        location.href = `/account/sign?next=${location.href}`;
     }
 }
 export function appendProductCard(container, product) {
@@ -125,7 +128,7 @@ export function appendProductCard(container, product) {
         cardSize.innerText = product["size"];
         cardMaterials.innerText = product["materials"];
         product['personal_rating'] ? cardPersonalRating.value = product['personal_rating'] : null;
-        cardRateCount.innerText = product["votes_count"] + " votes";
+        cardRateCount.innerHTML = `<span>${product["votes_count"]}</span> votes`;
         cardPrice.innerHTML = `<span>${product["price"]}</span>€`;
 
         let stars = cardRating.querySelectorAll('.rate');
@@ -184,6 +187,6 @@ export const toggleNewsletter = (toggler) => {
         toChange.innerText = 'Unsign newsletter';
     }
 }
-export const pullProducts = async (urlQuery) => await fetch('/api/product/' + `?${urlQuery}`)
+export const pullProducts = async (urlQuery) => await fetch(`/api/product/?${urlQuery}`)
                                                     .then(response => response.json())
                                                     .then(data => data.results)

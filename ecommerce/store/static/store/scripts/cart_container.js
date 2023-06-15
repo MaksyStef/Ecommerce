@@ -39,3 +39,11 @@ paypal.Buttons({
     shape: 'rect',
   }
 }).render('#paypal-button-container');
+
+window.addEventListener('DOMContentLoaded', ()=> {
+  if (document.querySelector('.products__empty')) {
+    let container = document.querySelector('#paypal-button-container');
+    container.style.opacity = 0.75;
+    container.style.pointerEvents = 'none';
+  }
+})
